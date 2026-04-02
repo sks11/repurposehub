@@ -5,8 +5,8 @@ import HowItWorks from "@/components/HowItWorks";
 import PlatformShowcase from "@/components/PlatformShowcase";
 import BrandVoice from "@/components/BrandVoice";
 import BeforeAfter from "@/components/BeforeAfter";
+import ChromeExtension from "@/components/ChromeExtension";
 import Testimonials from "@/components/Testimonials";
-import Integrations from "@/components/Integrations";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
@@ -23,8 +23,8 @@ export default function Home() {
         <PlatformShowcase />
         <BrandVoice />
         <BeforeAfter />
+        <ChromeExtension />
         <Testimonials />
-        <Integrations />
         <Pricing />
         <FAQ />
         <FinalCTA />

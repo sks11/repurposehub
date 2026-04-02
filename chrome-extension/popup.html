@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fff;
+      color: #1a1a2e;
+    }
+    .header {
+      padding: 20px;
+      background: linear-gradient(135deg, #f8f7ff, #f0eeff);
+      border-bottom: 1px solid #e5e0f5;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .logo-text span {
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .content {
+      padding: 20px;
+    }
+    .auth-section { display: none; }
+    .auth-section.active { display: block; }
+
+    /* Logged out state */
+    .login-prompt {
+      text-align: center;
+      padding: 16px 0;
+    }
+    .login-prompt p {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: white;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+    }
+    .btn-outline {
+      background: white;
+      color: #1a1a2e;
+      border: 1.5px solid #e5e0f5;
+      margin-top: 8px;
+    }
+    .btn-outline:hover {
+      border-color: #7c3aed;
+      background: #f8f7ff;
+    }
+
+    /* Logged in state */
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #f8f7ff;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .user-email {
+      font-size: 13px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .user-plan {
+      font-size: 11px;
+      color: #7c3aed;
+      font-weight: 600;
+    }
+    .usage-bar {
+      margin-bottom: 16px;
+    }
+    .usage-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+    .usage-track {
+      height: 6px;
+      background: #e5e0f5;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .usage-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #06b6d4);
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: white;
+      border: 1.5px solid #e5e0f5;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1a1a2e;
+      transition: all 0.15s;
+    }
+    .action-btn:hover {
+      border-color: #7c3aed;
+      background: #f8f7ff;
+    }
+    .action-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .action-desc {
+      font-size: 11px;
+      color: #6b7280;
+      font-weight: 400;
+    }
+    .footer {
+      padding: 12px 20px;
+      border-top: 1px solid #e5e0f5;
+      text-align: center;
+    }
+    .footer a {
+      font-size: 11px;
+      color: #7c3aed;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .footer a:hover { text-decoration: underline; }
+
+    .textarea-wrap {
+      margin-bottom: 12px;
+    }
+    .textarea-wrap textarea {
+      width: 100%;
+      height: 120px;
+      padding: 12px;
+      border: 1.5px solid #e5e0f5;
+      border-radius: 12px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      color: #1a1a2e;
+    }
+    .textarea-wrap textarea:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+    .textarea-wrap textarea::placeholder {
+      color: #a1a1aa;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+        </svg>
+      </div>
+      <div class="logo-text">Repurpose<span>Hub</span></div>
+    </div>
+    <div class="subtitle">Highlight text anywhere. Repurpose instantly.</div>
+  </div>
+
+  <div class="content">
+    <!-- Logged out -->
+    <div class="auth-section active" id="logged-out">
+      <div class="login-prompt">
+        <p>Sign in to your RepurposeHub account to start repurposing content from any webpage.</p>
+        <button class="btn btn-primary" id="btn-signin">Sign In to RepurposeHub</button>
+        <button class="btn btn-outline" id="btn-signup">Create Free Account</button>
+      </div>
+    </div>
+
+    <!-- Logged in -->
+    <div class="auth-section" id="logged-in">
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <div>
+          <div class="user-email" id="user-email">user@example.com</div>
+          <div class="user-plan" id="user-plan">Free Plan</div>
+        </div>
+      </div>
+
+      <div class="usage-bar">
+        <div class="usage-label">
+          <span>Generations</span>
+          <span id="usage-count">0 / 30</span>
+        </div>
+        <div class="usage-track">
+          <div class="usage-fill" id="usage-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="textarea-wrap">
+        <textarea id="paste-input" placeholder="Paste content here or highlight text on any page and right-click → Repurpose..."></textarea>
+      </div>
+
+      <div class="quick-actions">
+        <button class="btn btn-primary" id="btn-repurpose">Repurpose Content</button>
+        <button class="action-btn" id="btn-page">
+          <div class="action-icon" style="background: #f0eeff;">📄</div>
+          <div>
+            <div>Repurpose This Page</div>
+            <div class="action-desc">Extract and repurpose the current page content</div>
+          </div>
+        </button>
+        <button class="action-btn" id="btn-dashboard">
+          <div class="action-icon" style="background: #f0fdf4;">📊</div>
+          <div>
+            <div>Open Dashboard</div>
+            <div class="action-desc">View history, manage voice profiles</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://repurposehub.vercel.app" target="_blank">repurposehub.vercel.app</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
