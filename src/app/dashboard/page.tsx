@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { PLATFORMS } from "@/lib/types";
 import { PlatformOutput } from "@/lib/types";
-import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type, ClipboardList } from "lucide-react";
+import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type, ClipboardList, Mic } from "lucide-react";
 
 export default function DashboardPage() {
   const { getIdToken, refreshUsage, plan } = useAuth();
@@ -20,11 +20,29 @@ export default function DashboardPage() {
       setInputMode("text");
     }
   }, []);
+
+  // Fetch voice profiles
+  useEffect(() => {
+    const fetchVoices = async () => {
+      const token = await getIdToken();
+      if (!token) return;
+      try {
+        const res = await fetch("/api/voice", { headers: { Authorization: `Bearer ${token}` } });
+        if (res.ok) {
+          const data = await res.json();
+          setVoiceProfiles(data.profiles || []);
+        }
+      } catch { /* ignore */ }
+    };
+    fetchVoices();
+  }, [getIdToken]);
+
   const [inputUrl, setInputUrl] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(
     PLATFORMS.map((p) => p.id)
   );
-  const [voiceProfileId] = useState<string | undefined>(undefined);
+  const [voiceProfileId, setVoiceProfileId] = useState<string | undefined>(undefined);
+  const [voiceProfiles, setVoiceProfiles] = useState<{ id: string; name: string }[]>([]);
   const [outputs, setOutputs] = useState<PlatformOutput[]>([]);
   const [cost, setCost] = useState<{ model: string; inputTokens: number; outputTokens: number; totalTokens: number; costUsd: number } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -204,6 +222,26 @@ export default function DashboardPage() {
               })}
             </div>
           </div>
+
+          {/* Voice profile selector */}
+          {voiceProfiles.length > 0 && (
+            <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Mic className="w-4 h-4 text-primary" />
+                <label className="text-sm font-semibold text-foreground">Brand Voice</label>
+              </div>
+              <select
+                value={voiceProfileId || ""}
+                onChange={(e) => setVoiceProfileId(e.target.value || undefined)}
+                className="w-full bg-surface rounded-xl p-3 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+              >
+                <option value="">No voice profile (default)</option>
+                {voiceProfiles.map((vp) => (
+                  <option key={vp.id} value={vp.id}>{vp.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Generate button */}
           {error && (
