@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, Zap, Crown, Building } from "lucide-react";
+import { Check, Zap, Crown } from "lucide-react";
 
 const plans = [
   {
@@ -15,12 +15,6 @@ const plans = [
     price: 29, badge: "Most Popular",
     features: ["Unlimited generations", "All 12 platforms", "3 Brand Voice profiles", "90-day history + search", "URL content import", "Copy All outputs", "Email support"],
     cta: "Upgrade to Pro", ctaStyle: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary text-white shadow-lg shadow-primary/20", popular: true,
-  },
-  {
-    name: "Agency", icon: Building, description: "For teams & agencies",
-    price: 79, badge: null,
-    features: ["Everything in Pro", "10 Brand Voice profiles", "365-day history", "API access", "Priority support"],
-    cta: "Upgrade to Agency", ctaStyle: "border-2 border-border hover:border-primary/40 hover:bg-surface text-foreground", popular: false,
   },
 ];
 
@@ -38,7 +32,7 @@ export default function Pricing() {
           <p className="text-muted text-lg mt-4 max-w-2xl mx-auto">Start free. Upgrade when you&apos;re ready. No hidden fees. Cancel anytime.</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
           {plans.map((plan, i) => (
             <motion.div key={plan.name} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}
               className={`relative rounded-2xl p-8 ${plan.popular ? "bg-white border-2 border-primary/20 shadow-xl shadow-primary/8 scale-[1.02]" : "bg-white border border-border/60 shadow-sm"}`}>
@@ -60,7 +54,7 @@ export default function Pricing() {
                 <span className="text-4xl font-bold text-foreground">${plan.price}</span>
                 <span className="text-muted text-sm">{plan.price > 0 ? "/month" : ""}</span>
               </div>
-              <a href={plan.monthlyPrice === 0 ? "/auth/signup" : "/auth/signup?plan=" + plan.name.toLowerCase()}
+              <a href={plan.price === 0 ? "/auth/signup" : "/auth/signup?plan=pro"}
                 className={`block w-full py-3 rounded-xl text-sm font-semibold text-center transition-all hover:scale-[1.02] cursor-pointer ${plan.ctaStyle}`}>{plan.cta}</a>
               <div className="mt-6 pt-6 border-t border-border/50 space-y-3">
                 {plan.features.map((feature) => (
