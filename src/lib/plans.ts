@@ -15,7 +15,7 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
     maxInputWords: 3000,
   },
   pro: {
-    generationsPerMonth: -1, // unlimited
+    generationsPerMonth: 1000,
     voiceProfiles: 3,
     historyDays: 90,
     maxInputWords: 10000,

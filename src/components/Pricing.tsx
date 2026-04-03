@@ -13,7 +13,7 @@ const plans = [
   {
     name: "Pro", icon: Crown, description: "For serious content creators",
     price: 29, badge: "Most Popular",
-    features: ["Unlimited generations", "All 12 platforms", "3 Brand Voice profiles", "90-day history + search", "URL content import", "Copy All outputs", "Email support"],
+    features: ["1,000 generations / month", "All 12 platforms", "3 Brand Voice profiles", "90-day history + search", "URL content import", "Copy All outputs", "Email support"],
     cta: "Upgrade to Pro", ctaStyle: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary text-white shadow-lg shadow-primary/20", popular: true,
   },
 ];

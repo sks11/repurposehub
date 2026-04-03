@@ -16,11 +16,7 @@ const planCards = [
   },
   {
     id: "pro" as const, name: "Pro", icon: Crown, price: "$29",
-    features: ["Unlimited generations", "All 12 platforms", "3 voice profiles", "90-day history", "Priority speed", "Email support"],
-  },
-  {
-    id: "agency" as const, name: "Agency", icon: Building, price: "$79",
-    features: ["Unlimited generations", "All 12 platforms", "10 voice profiles", "365-day history", "API access", "Priority support"],
+    features: ["1,000 generations/month", "All 12 platforms", "3 voice profiles", "90-day history", "Email support"],
   },
 ];
 
