@@ -53,5 +53,5 @@ export const PLATFORMS = [
   { id: 'tiktok', name: 'TikTok', badge: 'badge-tiktok' },
   { id: 'substack', name: 'Substack', badge: 'badge-substack' },
   { id: 'threads', name: 'Threads', badge: 'badge-threads' },
-  { id: 'pinterest', name: 'Pinterest', badge: 'badge-pinterest' },
+  { id: 'facebook', name: 'Facebook', badge: 'badge-facebook' },
 ] as const;

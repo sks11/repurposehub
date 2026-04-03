@@ -6,7 +6,7 @@ import { Mail } from "lucide-react";
 import {
   XTwitterIcon, LinkedInIcon, InstagramIcon, YouTubeIcon,
   TelegramIcon, RedditIcon, MediumIcon, TikTokIcon,
-  SubstackIcon, ThreadsIcon, PinterestIcon,
+  SubstackIcon, ThreadsIcon, FacebookIcon,
 } from "./Icons";
 
 const platforms = [
@@ -66,7 +66,7 @@ const platforms = [
     example: `hot take: you don't need more clients to grow your business\n\nI cut mine from 40 to 18 and TRIPLED my revenue\n\nthe math most people ignore:\n\n40 clients × $375/mo = $15K\n18 clients × $2,800/mo = $50K\n\nfewer people. deeper work. better results.\n\nthe 5 things that actually mattered:\n→ depth over breadth\n→ systems over hustle\n→ lead with your story\n→ price for outcomes\n→ community > followers\n\n18 months. $0 to $50K/month.\n\nsometimes less really is more`,
   },
   {
-    id: "pinterest", name: "Pinterest", icon: PinterestIcon, color: "#e60023", badge: "badge-pinterest",
+    id: "facebook", name: "Facebook", icon: FacebookIcon, color: "#1877F2", badge: "badge-facebook",
     format: "Pin description + title", tone: "SEO-rich, aspirational, actionable",
     example: `PIN TITLE: 5 Coaching Business Lessons: $0 to $50K/Month\n\nPIN DESCRIPTION:\nHow I grew my coaching business from $0 to $50,000 per month in just 18 months using 5 counterintuitive principles. Learn why serving FEWER clients led to 3x more revenue, how to build automated systems, and why community beats audience every time.\n\nPerfect for: coaches, consultants, online course creators, solopreneurs\n\nBOARD: Coaching Business Tips\n\nTAGS: coaching business, online coaching, business growth, entrepreneur tips, coaching revenue, scaling business`,
   },

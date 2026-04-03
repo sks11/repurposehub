@@ -65,7 +65,7 @@ IMPORTANT:
 - For TikTok: Short-form script with hook, quick points, CTA
 - For Substack: Newsletter format, personal and subscriber-intimate
 - For Threads: Casual, conversational, bite-sized
-- For Pinterest: Plain text with labeled sections — Title, Description, Suggested Board, and Tags on separate lines`;
+- For Facebook: Conversational tone, use line breaks for readability, ask a question or share an opinion to drive engagement, 1-3 relevant hashtags max, include a CTA`;
 }
 
 export function buildVoiceAnalysisPrompt(samples: string[]): string {

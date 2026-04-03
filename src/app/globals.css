@@ -146,7 +146,7 @@ html {
 .badge-youtube { background: rgba(255, 0, 0, 0.08); color: #cc0000; border: 1px solid rgba(255, 0, 0, 0.15); }
 .badge-threads { background: rgba(0, 0, 0, 0.05); color: #333; border: 1px solid rgba(0, 0, 0, 0.1); }
 .badge-substack { background: rgba(255, 102, 0, 0.08); color: #e05500; border: 1px solid rgba(255, 102, 0, 0.15); }
-.badge-pinterest { background: rgba(230, 0, 35, 0.08); color: #c8002d; border: 1px solid rgba(230, 0, 35, 0.15); }
+.badge-facebook { background: rgba(24, 119, 242, 0.08); color: #1877F2; border: 1px solid rgba(24, 119, 242, 0.15); }
 
 /* Smooth card hover */
 .card-hover {
