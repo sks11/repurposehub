@@ -1,33 +1,30 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Zap, Crown, Building } from "lucide-react";
 
 const plans = [
   {
     name: "Starter", icon: Zap, description: "For creators getting started",
-    monthlyPrice: 0, yearlyPrice: 0, badge: null,
-    features: ["30 generations / month", "All 12 platforms", "Brand Voice (basic)", "Generation history (7 days)", "One-click copy", "Community support"],
+    price: 0, badge: null,
+    features: ["30 generations / month", "All 12 platforms", "1 Brand Voice profile", "7-day history", "One-click copy"],
     cta: "Start Free", ctaStyle: "border-2 border-border hover:border-primary/40 hover:bg-surface text-foreground", popular: false,
   },
   {
     name: "Pro", icon: Crown, description: "For serious content creators",
-    monthlyPrice: 29, yearlyPrice: 24, badge: "Most Popular",
-    features: ["Unlimited generations", "All 12 platforms", "Advanced Brand Voice", "Unlimited history + search", "Priority generation speed", "Bulk content import", "Custom tone presets", "Export to scheduling tools", "Email support (24hr)"],
-    cta: "Start 14-Day Free Trial", ctaStyle: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary text-white shadow-lg shadow-primary/20", popular: true,
+    price: 29, badge: "Most Popular",
+    features: ["Unlimited generations", "All 12 platforms", "3 Brand Voice profiles", "90-day history + search", "URL content import", "Copy All outputs", "Email support"],
+    cta: "Upgrade to Pro", ctaStyle: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary text-white shadow-lg shadow-primary/20", popular: true,
   },
   {
     name: "Agency", icon: Building, description: "For teams & agencies",
-    monthlyPrice: 79, yearlyPrice: 66, badge: null,
-    features: ["Everything in Pro", "5 team seats included", "10 Brand Voice profiles", "API access", "White-label exports", "Advanced analytics", "Zapier & webhook integrations", "Priority support (4hr)", "Custom onboarding call"],
-    cta: "Start 14-Day Free Trial", ctaStyle: "border-2 border-border hover:border-primary/40 hover:bg-surface text-foreground", popular: false,
+    price: 79, badge: null,
+    features: ["Everything in Pro", "10 Brand Voice profiles", "365-day history", "API access", "Priority support"],
+    cta: "Upgrade to Agency", ctaStyle: "border-2 border-border hover:border-primary/40 hover:bg-surface text-foreground", popular: false,
   },
 ];
 
 export default function Pricing() {
-  const [annual, setAnnual] = useState(true);
-
   return (
     <section id="pricing" className="relative py-28 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -39,14 +36,6 @@ export default function Pricing() {
           <span className="text-sm font-semibold text-primary tracking-wider uppercase">Pricing</span>
           <h2 className="text-4xl sm:text-5xl font-bold mt-4 text-foreground">Simple, <span className="gradient-text">transparent</span> pricing</h2>
           <p className="text-muted text-lg mt-4 max-w-2xl mx-auto">Start free. Upgrade when you&apos;re ready. No hidden fees. Cancel anytime.</p>
-
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <span className={`text-sm font-medium ${!annual ? "text-foreground" : "text-muted"}`}>Monthly</span>
-            <button onClick={() => setAnnual(!annual)} className={`relative w-14 h-7 rounded-full transition-colors ${annual ? "bg-primary" : "bg-gray-300"}`}>
-              <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${annual ? "left-8" : "left-1"}`} />
-            </button>
-            <span className={`text-sm font-medium ${annual ? "text-foreground" : "text-muted"}`}>Annual <span className="text-green-600 text-xs font-semibold">Save 17%</span></span>
-          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -68,8 +57,8 @@ export default function Pricing() {
                 </div>
               </div>
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-bold text-foreground">${annual ? plan.yearlyPrice : plan.monthlyPrice}</span>
-                <span className="text-muted text-sm">/month</span>
+                <span className="text-4xl font-bold text-foreground">${plan.price}</span>
+                <span className="text-muted text-sm">{plan.price > 0 ? "/month" : ""}</span>
               </div>
               <a href={plan.monthlyPrice === 0 ? "/auth/signup" : "/auth/signup?plan=" + plan.name.toLowerCase()}
                 className={`block w-full py-3 rounded-xl text-sm font-semibold text-center transition-all hover:scale-[1.02] cursor-pointer ${plan.ctaStyle}`}>{plan.cta}</a>
@@ -86,7 +75,7 @@ export default function Pricing() {
         </div>
 
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex flex-wrap items-center justify-center gap-8 mt-14 text-sm text-muted">
-          {["No credit card required", "14-day free trial on paid plans", "Cancel anytime", "GDPR compliant", "256-bit encryption"].map((item) => (
+          {["No credit card required for free plan", "Cancel anytime", "GDPR compliant", "256-bit encryption"].map((item) => (
             <div key={item} className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-green-500" />{item}</div>
           ))}
         </motion.div>
