@@ -1,29 +1,50 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Globe, MousePointerClick, PanelRight, Copy, ArrowRight } from "lucide-react";
+import { Globe, MousePointerClick, PanelRight, Copy, ArrowRight, Download, Puzzle, FolderOpen } from "lucide-react";
 
 const steps = [
   {
     icon: MousePointerClick,
-    title: "Highlight Any Text",
-    description: "Select text on any webpage — a blog post, tweet, newsletter, article, or competitor content.",
+    title: "Select & Right-Click",
+    description: "Highlight any text on a webpage, then right-click and choose 'Repurpose with RepurposeHub'.",
   },
   {
     icon: PanelRight,
-    title: "Side Panel Opens",
-    description: "Right-click → 'Repurpose with RepurposeHub'. A side panel slides open with all 12 platform versions.",
+    title: "Choose Platforms",
+    description: "The side panel opens with your text loaded. Pick which platforms you want, then hit Generate.",
   },
   {
     icon: Copy,
     title: "Copy & Publish",
-    description: "One-click copy for each platform. Your brand voice is applied automatically. Just paste and post.",
+    description: "Copy individual outputs or use Copy All. Your brand voice is applied automatically. Just paste and post.",
+  },
+];
+
+const installSteps = [
+  {
+    icon: Download,
+    num: "1",
+    title: "Download",
+    description: "Click the button above to download the extension zip file.",
+  },
+  {
+    icon: FolderOpen,
+    num: "2",
+    title: "Unzip",
+    description: "Extract the downloaded zip file to a folder on your computer.",
+  },
+  {
+    icon: Puzzle,
+    num: "3",
+    title: "Install",
+    description: "Go to chrome://extensions, enable Developer Mode, click 'Load unpacked', and select the folder.",
   },
 ];
 
 export default function ChromeExtension() {
   return (
-    <section className="relative py-28 overflow-hidden section-alt border-y border-border/50">
+    <section id="extension" className="relative py-28 overflow-hidden section-alt border-y border-border/50">
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Info */}
@@ -44,8 +65,8 @@ export default function ChromeExtension() {
               <span className="gradient-text">anywhere</span> on the web
             </h2>
             <p className="text-muted text-lg mt-5 leading-relaxed">
-              See a great blog post? An inspiring tweet? Highlight the text,
-              right-click, and get 12 platform-ready versions instantly — without
+              See a great blog post? An inspiring article? Select the text,
+              right-click, and get platform-ready versions instantly — without
               leaving the page.
             </p>
 
@@ -80,7 +101,7 @@ export default function ChromeExtension() {
                 download
                 className="group inline-flex items-center justify-center gap-2 text-white bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary px-6 py-3.5 rounded-xl text-sm font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
               >
-                <Globe className="w-4 h-4" />
+                <Download className="w-4 h-4" />
                 Download Chrome Extension
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </a>
@@ -97,7 +118,7 @@ export default function ChromeExtension() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {/* Browser mockup with side panel */}
+            {/* Browser mockup with right-click context menu */}
             <div className="rounded-2xl border border-border/60 shadow-xl overflow-hidden bg-white">
               {/* Browser bar */}
               <div className="flex items-center gap-2 px-4 py-3 bg-surface border-b border-border">
@@ -108,50 +129,46 @@ export default function ChromeExtension() {
                 </div>
                 <div className="flex-1 mx-3">
                   <div className="bg-white rounded-lg px-3 py-1 text-[10px] text-muted text-center border border-border/60">
-                    blog.example.com/productivity-tips
+                    techcrunch.com/2026/openai-acquires-tbpn
                   </div>
                 </div>
               </div>
 
-              {/* Content area with side panel */}
+              {/* Content area */}
               <div className="flex">
-                {/* Page content */}
-                <div className="flex-1 p-5 border-r border-border/50">
+                {/* Page content with context menu */}
+                <div className="flex-1 p-5 relative">
                   <div className="space-y-3">
                     <div className="h-3 w-2/3 bg-foreground/10 rounded" />
                     <div className="h-2 w-full bg-muted/10 rounded" />
-                    <div className="h-2 w-full bg-muted/10 rounded" />
                     {/* Highlighted text */}
-                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 relative">
+                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
                       <p className="text-[10px] text-foreground/70 leading-relaxed">
-                        The 5 productivity habits that changed my business:
-                        focus on one thing at a time, batch similar tasks,
-                        protect your morning hours...
+                        OpenAI has acquired TBPN, the popular founder-led business
+                        talk show, marking its first move into media content...
                       </p>
-                      {/* Floating button mockup */}
-                      <div className="absolute -bottom-3 right-4 flex items-center gap-1 bg-gradient-to-r from-primary to-primary-dark text-white text-[9px] font-semibold px-2.5 py-1.5 rounded-lg shadow-lg shadow-primary/30">
-                        <svg
-                          width="10"
-                          height="10"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
-                        </svg>
-                        Repurpose
-                      </div>
                     </div>
-                    <div className="h-2 w-4/5 bg-muted/10 rounded mt-4" />
+                    <div className="h-2 w-4/5 bg-muted/10 rounded" />
                     <div className="h-2 w-full bg-muted/10 rounded" />
+                  </div>
+
+                  {/* Context menu mockup */}
+                  <div className="absolute top-16 right-6 bg-white rounded-lg shadow-2xl border border-border/80 py-1 w-[200px] z-10">
+                    <div className="px-3 py-1.5 text-[10px] text-muted hover:bg-surface">Copy</div>
+                    <div className="px-3 py-1.5 text-[10px] text-muted hover:bg-surface">Paste</div>
+                    <div className="h-px bg-border/50 my-0.5" />
+                    <div className="px-3 py-1.5 text-[10px] font-semibold text-primary bg-primary/5 flex items-center gap-1.5">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+                      </svg>
+                      Repurpose with RepurposeHub
+                    </div>
+                    <div className="px-3 py-1.5 text-[10px] text-muted hover:bg-surface">Search Google for...</div>
                   </div>
                 </div>
 
                 {/* Side panel */}
-                <div className="w-[180px] bg-surface/50 p-3 space-y-2">
+                <div className="w-[180px] bg-surface/50 p-3 space-y-2 border-l border-border/50">
                   <div className="flex items-center gap-1.5 mb-3">
                     <div className="w-4 h-4 rounded bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                       <span className="text-[6px] text-white font-bold">R</span>
@@ -199,6 +216,34 @@ export default function ChromeExtension() {
             </div>
           </motion.div>
         </div>
+
+        {/* Installation instructions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-20"
+        >
+          <h3 className="text-2xl font-bold text-foreground text-center mb-10">How to Install</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+            {installSteps.map((step, i) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.4 }}
+                className="bg-white rounded-2xl border border-border/60 shadow-sm p-6 text-center"
+              >
+                <div className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center mx-auto mb-3">
+                  <span className="text-primary font-bold text-lg">{step.num}</span>
+                </div>
+                <h4 className="font-semibold text-foreground mb-2">{step.title}</h4>
+                <p className="text-sm text-muted leading-relaxed">{step.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </section>
   );
