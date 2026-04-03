@@ -10,8 +10,7 @@
     "storage"
   ],
   "host_permissions": [
-    "https://repurposehub.vercel.app/*",
-    "http://localhost:3000/*"
+    "https://repurposehub.vercel.app/*"
   ],
   "background": {
     "service_worker": "background.js"

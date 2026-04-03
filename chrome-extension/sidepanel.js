@@ -1,5 +1,5 @@
 // Use localhost for dev, change to production URL before publishing
-const API_BASE = 'http://localhost:3000';
+const API_BASE = 'https://repurposehub.vercel.app';
 
 const PLATFORMS = [
   { id: 'twitter', name: 'Twitter/X', badge: 'badge-twitter' },
