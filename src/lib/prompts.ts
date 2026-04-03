@@ -69,17 +69,26 @@ IMPORTANT:
 }
 
 export function buildVoiceAnalysisPrompt(samples: string[]): string {
-  return `Analyze the following writing samples and create a detailed voice profile. Identify:
-
-1. **Tone**: formal/informal, serious/playful, etc.
-2. **Vocabulary**: common phrases, jargon level, word preferences
-3. **Sentence structure**: short/long, simple/complex, rhythm
-4. **Personality markers**: humor style, use of metaphors, rhetorical devices
-5. **Formatting preferences**: use of bullet points, emojis, caps, etc.
-6. **Distinctive patterns**: catchphrases, opening/closing styles
+  return `You are a voice analysis expert. Study these writing samples and create a SPECIFIC, ACTIONABLE voice replication guide. Do NOT write vague descriptions — write concrete instructions that would let someone impersonate this writer convincingly.
 
 SAMPLES:
 ${samples.map((s, i) => `--- Sample ${i + 1} ---\n${s}\n`).join('\n')}
 
-Return a concise but thorough voice profile description (200-300 words) that can be used as instructions for an AI to replicate this writing style. Focus on actionable characteristics.`;
+Create a voice profile covering ALL of these (with SPECIFIC EXAMPLES from the samples):
+
+1. **VOCABULARY LEVEL & SPECIFIC WORDS**: List 10-15 actual words/phrases this person uses. What is their vocabulary level? (e.g., "Uses words like 'exsanguination', 'farraginous', 'stupefaction' — deliberately elevated, Latinate vocabulary")
+
+2. **SENTENCE STRUCTURE**: Average sentence length? Simple or complex? Do they use semicolons, em-dashes, parenthetical asides? Quote specific sentence patterns.
+
+3. **METAPHOR DOMAINS**: What topics do they draw metaphors from? (e.g., cricket, colonial history, literature). Give specific examples from the samples.
+
+4. **RHETORICAL DEVICES**: Do they use irony, understatement, hyperbole, rhetorical questions, tricolons? Quote examples.
+
+5. **PERSONALITY & ATTITUDE**: What is their stance? (e.g., "witty intellectual superiority with self-awareness", "passionate defender of X"). How do they handle disagreement?
+
+6. **SIGNATURE MOVES**: What makes this person IMMEDIATELY recognizable? What would a reader notice in the first sentence? (e.g., "Opens with a provocative reframing of the obvious", "Always connects modern events to historical parallels")
+
+7. **WHAT TO AVOID**: What would this person NEVER write? (e.g., "Would never use corporate buzzwords like 'synergy' or 'leverage'", "Would never write short punchy sentences without subordinate clauses")
+
+Return 400-500 words. Be extremely specific — generic advice like "uses formal tone" is useless. Every point should include quoted examples.`;
 }
