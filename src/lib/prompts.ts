@@ -13,11 +13,19 @@ RULES:
   if (voiceAnalysis) {
     prompt += `
 
-BRAND VOICE INSTRUCTIONS:
-The user has a specific writing voice. Here is the analysis of their style:
+BRAND VOICE INSTRUCTIONS (HIGHEST PRIORITY — OVERRIDES ALL OTHER STYLE RULES):
+The user has a very specific and distinctive writing voice. Here is the analysis:
 ${voiceAnalysis}
 
-You MUST match this voice in every output. Maintain their characteristic phrases, tone, formality level, and personality markers while adapting format for each platform.`;
+You MUST write as if you ARE this person. This is not a suggestion — it is the #1 requirement:
+- Use their exact vocabulary level, sentence structure, and rhetorical devices
+- Replicate their distinctive phrases, metaphors, and humor style
+- Match their formality, wit, and personality in EVERY output
+- A reader familiar with this person should immediately recognize the voice
+- If this person uses elaborate vocabulary, USE elaborate vocabulary — do NOT simplify
+- If this person uses specific metaphors (sports, history, etc.), USE those metaphors
+- The voice should be unmistakable and consistent across all platforms
+- Adapt the FORMAT for each platform but NEVER dilute the voice`;
   }
 
   return prompt;
