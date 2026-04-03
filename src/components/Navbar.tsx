@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X, Zap, LogOut } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
 const navLinks = [
@@ -13,7 +13,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -57,12 +57,21 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-3">
             {!authLoading && user ? (
-              <a
-                href="/dashboard"
-                className="text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary px-5 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-primary/25"
-              >
-                Dashboard
-              </a>
+              <div className="flex items-center gap-2">
+                <a
+                  href="/dashboard"
+                  className="text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary px-5 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-primary/25"
+                >
+                  Dashboard
+                </a>
+                <button
+                  onClick={() => signOut()}
+                  className="p-2 rounded-lg text-muted hover:text-red-500 hover:bg-red-50 transition-colors"
+                  title="Sign out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
             ) : (
               <>
                 <a
@@ -111,13 +120,21 @@ export default function Navbar() {
               ))}
               <div className="pt-6 border-t border-border flex flex-col gap-3">
                 {!authLoading && user ? (
-                  <a
-                    href="/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className="bg-gradient-to-r from-primary to-primary-dark text-white text-center py-3 rounded-xl font-medium text-lg"
-                  >
-                    Dashboard
-                  </a>
+                  <>
+                    <a
+                      href="/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="bg-gradient-to-r from-primary to-primary-dark text-white text-center py-3 rounded-xl font-medium text-lg"
+                    >
+                      Dashboard
+                    </a>
+                    <button
+                      onClick={() => { signOut(); setMobileOpen(false); }}
+                      className="text-red-500 text-lg font-medium"
+                    >
+                      Sign Out
+                    </button>
+                  </>
                 ) : (
                   <>
                     <a href="/auth/signin" className="text-muted text-lg">Sign in</a>
