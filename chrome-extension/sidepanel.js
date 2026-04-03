@@ -2,18 +2,18 @@
 const API_BASE = 'https://repurposehub.vercel.app';
 
 const PLATFORMS = [
-  { id: 'twitter', name: 'Twitter/X', badge: 'badge-twitter' },
-  { id: 'linkedin', name: 'LinkedIn', badge: 'badge-linkedin' },
+  { id: 'facebook', name: 'Facebook', badge: 'badge-facebook' },
   { id: 'instagram', name: 'Instagram', badge: 'badge-instagram' },
   { id: 'youtube', name: 'YouTube', badge: 'badge-youtube' },
-  { id: 'email', name: 'Email', badge: 'badge-email' },
-  { id: 'telegram', name: 'Telegram', badge: 'badge-telegram' },
-  { id: 'reddit', name: 'Reddit', badge: 'badge-reddit' },
-  { id: 'medium', name: 'Medium', badge: 'badge-medium' },
+  { id: 'twitter', name: 'Twitter/X', badge: 'badge-twitter' },
   { id: 'tiktok', name: 'TikTok', badge: 'badge-tiktok' },
-  { id: 'substack', name: 'Substack', badge: 'badge-substack' },
+  { id: 'linkedin', name: 'LinkedIn', badge: 'badge-linkedin' },
+  { id: 'reddit', name: 'Reddit', badge: 'badge-reddit' },
   { id: 'threads', name: 'Threads', badge: 'badge-threads' },
-  { id: 'facebook', name: 'Facebook', badge: 'badge-facebook' },
+  { id: 'telegram', name: 'Telegram', badge: 'badge-telegram' },
+  { id: 'email', name: 'Email', badge: 'badge-email' },
+  { id: 'medium', name: 'Medium', badge: 'badge-medium' },
+  { id: 'substack', name: 'Substack', badge: 'badge-substack' },
 ];
 
 let selectedPlatforms = PLATFORMS.map(p => p.id);
