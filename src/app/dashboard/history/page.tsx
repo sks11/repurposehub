@@ -40,6 +40,13 @@ export default function HistoryPage() {
     !search || g.inputText.toLowerCase().includes(search.toLowerCase())
   );
 
+  const formatContent = (content: string | Record<string, unknown>): string => {
+    if (typeof content === 'string') return content;
+    return Object.entries(content)
+      .map(([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${Array.isArray(val) ? val.join(', ') : val}`)
+      .join('\n\n');
+  };
+
   const formatDate = (ts: number) => {
     return new Date(ts).toLocaleDateString("en-US", {
       month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit",
@@ -121,14 +128,14 @@ export default function HistoryPage() {
                             {platform?.name || output.platform}
                           </span>
                           <button
-                            onClick={() => copyToClipboard(copyKey, output.content)}
+                            onClick={() => copyToClipboard(copyKey, formatContent(output.content))}
                             className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                               copied === copyKey ? "bg-green-50 text-green-600" : "bg-primary/5 text-primary hover:bg-primary/10"
                             }`}>
                             {copied === copyKey ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy</>}
                           </button>
                         </div>
-                        <pre className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap font-sans">{output.content}</pre>
+                        <pre className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap font-sans">{formatContent(output.content)}</pre>
                       </div>
                     );
                   })}

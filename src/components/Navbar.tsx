@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Zap } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -12,6 +13,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const { user, loading: authLoading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -54,18 +56,29 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <a
-              href="/auth/signin"
-              className="text-sm text-muted hover:text-foreground transition-colors px-4 py-2 font-medium"
-            >
-              Sign in
-            </a>
-            <a
-              href="/auth/signup"
-              className="text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary px-5 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-primary/25"
-            >
-              Get Started Free
-            </a>
+            {!authLoading && user ? (
+              <a
+                href="/dashboard"
+                className="text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary px-5 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-primary/25"
+              >
+                Dashboard
+              </a>
+            ) : (
+              <>
+                <a
+                  href="/auth/signin"
+                  className="text-sm text-muted hover:text-foreground transition-colors px-4 py-2 font-medium"
+                >
+                  Sign in
+                </a>
+                <a
+                  href="/auth/signup"
+                  className="text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary px-5 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-primary/25"
+                >
+                  Get Started Free
+                </a>
+              </>
+            )}
           </div>
 
           <button
@@ -97,14 +110,26 @@ export default function Navbar() {
                 </a>
               ))}
               <div className="pt-6 border-t border-border flex flex-col gap-3">
-                <a href="/auth/signin" className="text-muted text-lg">Sign in</a>
-                <a
-                  href="/auth/signup"
-                  onClick={() => setMobileOpen(false)}
-                  className="bg-gradient-to-r from-primary to-primary-dark text-white text-center py-3 rounded-xl font-medium text-lg"
-                >
-                  Get Started Free
-                </a>
+                {!authLoading && user ? (
+                  <a
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="bg-gradient-to-r from-primary to-primary-dark text-white text-center py-3 rounded-xl font-medium text-lg"
+                  >
+                    Dashboard
+                  </a>
+                ) : (
+                  <>
+                    <a href="/auth/signin" className="text-muted text-lg">Sign in</a>
+                    <a
+                      href="/auth/signup"
+                      onClick={() => setMobileOpen(false)}
+                      className="bg-gradient-to-r from-primary to-primary-dark text-white text-center py-3 rounded-xl font-medium text-lg"
+                    >
+                      Get Started Free
+                    </a>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

@@ -1,5 +1,12 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
+import {
+  getAuth,
+  initializeAuth,
+  Auth,
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
+  indexedDBLocalPersistence,
+} from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -25,6 +32,16 @@ export function isFirebaseConfigured(): boolean {
 
 export function getFirebaseAuth(): Auth {
   if (_auth) return _auth;
-  _auth = getAuth(getApp());
+
+  const app = getApp();
+  try {
+    _auth = initializeAuth(app, {
+      persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+      popupRedirectResolver: browserPopupRedirectResolver,
+    });
+  } catch {
+    _auth = getAuth(app);
+  }
+
   return _auth;
 }

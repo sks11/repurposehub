@@ -71,7 +71,8 @@ export default function Pricing() {
                 <span className="text-4xl font-bold text-foreground">${annual ? plan.yearlyPrice : plan.monthlyPrice}</span>
                 <span className="text-muted text-sm">/month</span>
               </div>
-              <button className={`w-full py-3 rounded-xl text-sm font-semibold transition-all hover:scale-[1.02] cursor-pointer ${plan.ctaStyle}`}>{plan.cta}</button>
+              <a href={plan.monthlyPrice === 0 ? "/auth/signup" : "/auth/signup?plan=" + plan.name.toLowerCase()}
+                className={`block w-full py-3 rounded-xl text-sm font-semibold text-center transition-all hover:scale-[1.02] cursor-pointer ${plan.ctaStyle}`}>{plan.cta}</a>
               <div className="mt-6 pt-6 border-t border-border/50 space-y-3">
                 {plan.features.map((feature) => (
                   <div key={feature} className="flex items-center gap-3 text-sm">

@@ -4,27 +4,21 @@ import { Zap } from "lucide-react";
 
 const footerLinks = {
   Product: [
-    { label: "Features", href: "#features" },
-    { label: "Platforms", href: "#platforms" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "API", href: "#" },
-    { label: "Changelog", href: "#" },
+    { label: "Features", href: "/#how-it-works" },
+    { label: "Platforms", href: "/#platforms" },
+    { label: "Brand Voice", href: "/#voice" },
+    { label: "Chrome Extension", href: "/#extension" },
+    { label: "Pricing", href: "/#pricing" },
   ],
-  Resources: [
-    { label: "Blog", href: "#" },
-    { label: "Help Center", href: "#" },
-    { label: "Documentation", href: "#" },
-    { label: "Tutorials", href: "#" },
-  ],
-  Company: [
-    { label: "About", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Contact", href: "#" },
+  Account: [
+    { label: "Sign Up Free", href: "/auth/signup" },
+    { label: "Sign In", href: "/auth/signin" },
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Settings", href: "/dashboard/settings" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "#" },
   ],
 };
 
@@ -32,7 +26,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-border/50 bg-surface/40">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           <div className="col-span-2 md:col-span-1">
             <a href="#" className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-sm">

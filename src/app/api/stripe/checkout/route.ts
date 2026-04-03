@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     payment_method_types: ['card'],
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${appUrl}/dashboard?upgraded=true`,
-    cancel_url: `${appUrl}/dashboard/settings`,
+    cancel_url: `${appUrl}/dashboard/settings?checkout=canceled`,
     metadata: { userId: authUser.uid, planType },
   };
 

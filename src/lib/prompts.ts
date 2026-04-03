@@ -43,19 +43,21 @@ Return a JSON object with this exact structure:
 
 Platform IDs to use: ${platforms.join(', ')}
 
+CRITICAL: The "content" field for EVERY platform MUST be a plain text string. NEVER return nested objects, arrays, or JSON inside the content field. All formatting should be done with plain text, line breaks, and labels.
+
 IMPORTANT:
-- For Twitter: Keep under 280 chars for single tweet, or create a thread format
+- For Twitter: MUST be under 280 characters total including hashtags and emojis. If the content is too long for one tweet, create a thread with numbered tweets (1/3, 2/3, 3/3) each under 280 chars, separated by line breaks
 - For LinkedIn: Professional tone, include relevant hashtags, data-driven
-- For Instagram: Create carousel-style content with clear slides, save-worthy
-- For YouTube: Title + description + timestamps format
-- For Email: Subject line + body + CTA format
+- For Instagram: Write a ready-to-paste caption (NOT carousel slides). Use line breaks for readability, emojis sparingly, a strong hook in the first line, key points as short punchy lines, end with a CTA and 5-15 relevant hashtags
+- For YouTube: SEO-optimized title, a keyword-rich description (2-3 paragraphs with a hook in the first line), a "Key Topics" section listing what the video covers, relevant tags, and a short video script outline with talking points. Do NOT generate fake timestamps — there is no video yet
+- For Email: Subject line + body + CTA as plain text with labels
 - For Telegram: 5-block structure (hook, story, data, tips, CTA)
 - For Reddit: Authentic discussion style, no promotional feel
 - For Medium: Article-length with headers and narrative
 - For TikTok: Short-form script with hook, quick points, CTA
 - For Substack: Newsletter format, personal and subscriber-intimate
 - For Threads: Casual, conversational, bite-sized
-- For Pinterest: SEO-rich pin title + description + board suggestion + tags`;
+- For Pinterest: Plain text with labeled sections — Title, Description, Suggested Board, and Tags on separate lines`;
 }
 
 export function buildVoiceAnalysisPrompt(samples: string[]): string {

@@ -37,9 +37,10 @@ export function useAuth() {
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => isFirebaseConfigured());
   const [plan, setPlan] = useState<PlanType>("free");
   const [usage, setUsage] = useState<UsageInfo | null>(null);
+  const debugAuth = process.env.NODE_ENV !== "production";
 
   const getIdToken = useCallback(async (): Promise<string | null> => {
     if (!user) return null;
@@ -77,11 +78,28 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isFirebaseConfigured()) {
-      setLoading(false);
+      if (debugAuth) {
+        console.info("[Auth] Firebase client config missing; skipping auth restore");
+      }
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), async (firebaseUser) => {
+    const auth = getFirebaseAuth();
+    let isActive = true;
+
+    if (debugAuth) {
+      console.info("[Auth] Starting auth restore", {
+        currentUser: auth.currentUser?.email ?? null,
+      });
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!isActive) return;
+      if (debugAuth) {
+        console.info("[Auth] onAuthStateChanged", {
+          user: firebaseUser?.email ?? null,
+        });
+      }
       setUser(firebaseUser);
       setLoading(false);
       if (firebaseUser) {
@@ -94,7 +112,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           });
           if (res.ok) {
             const data = await res.json();
-            setPlan(data.plan || "free");
+            if (isActive) {
+              setPlan(data.plan || "free");
+            }
+            if (debugAuth) {
+              console.info("[Auth] Session sync complete", {
+                plan: data.plan || "free",
+              });
+            }
           }
         } catch { /* ignore */ }
         // Fetch usage
@@ -104,7 +129,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           });
           if (res.ok) {
             const data = await res.json();
-            setUsage(data);
+            if (isActive) {
+              setUsage(data);
+            }
+            if (debugAuth) {
+              console.info("[Auth] Usage loaded", {
+                generationsCount: data.generationsCount ?? null,
+              });
+            }
           }
         } catch { /* ignore */ }
       } else {
@@ -112,11 +144,48 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setUsage(null);
       }
     });
-    return () => unsubscribe();
-  }, []);
+
+    auth.authStateReady()
+      .then(() => {
+        if (!isActive) return;
+        if (debugAuth) {
+          console.info("[Auth] authStateReady resolved", {
+            currentUser: auth.currentUser?.email ?? null,
+          });
+        }
+        setUser(auth.currentUser);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!isActive) return;
+        if (debugAuth) {
+          console.warn("[Auth] authStateReady rejected");
+        }
+        setLoading(false);
+      });
+
+    return () => {
+      isActive = false;
+      unsubscribe();
+    };
+  }, [debugAuth]);
+
+  useEffect(() => {
+    if (!debugAuth || typeof window === "undefined") return;
+
+    (window as Window & { __authDebug?: Record<string, unknown> }).__authDebug = {
+      loading,
+      user: user?.email ?? null,
+      plan,
+      generationsCount: usage?.generationsCount ?? null,
+      href: window.location.href,
+      updatedAt: Date.now(),
+    };
+  }, [debugAuth, loading, plan, usage, user]);
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     await signInWithPopup(getFirebaseAuth(), provider);
   };
 

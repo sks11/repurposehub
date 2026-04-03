@@ -36,10 +36,37 @@
     }
 
     /* Platform pills */
-    .platforms-bar {
+    .platforms-section {
       padding: 12px 20px;
       background: white;
       border-bottom: 1px solid #e5e0f5;
+    }
+    .platforms-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .platforms-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .platforms-toggle {
+      display: flex;
+      gap: 8px;
+    }
+    .platforms-toggle a {
+      font-size: 11px;
+      color: #7c3aed;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .platforms-toggle a:hover { text-decoration: underline; }
+    .platforms-bar {
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
@@ -90,6 +117,104 @@
     }
     .empty-desc {
       font-size: 13px; color: #6b7280; line-height: 1.5;
+    }
+    .url-input-wrap {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .url-input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1.5px solid #e5e0f5;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #1a1a2e;
+      outline: none;
+    }
+    .url-input:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+    .url-input::placeholder { color: #a1a1aa; }
+    .url-go-btn {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .url-go-btn:hover {
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    /* Ready state — text loaded, waiting for user to generate */
+    .ready-preview {
+      background: white;
+      border: 1.5px solid #e5e0f5;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .ready-preview-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .ready-preview-text {
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.6;
+      max-height: 150px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      background: #f8f7ff;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .ready-source {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+    .generate-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .generate-btn:hover {
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+    }
+    .generate-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .platform-count {
+      background: rgba(255,255,255,0.2);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
     }
 
     /* Loading */
@@ -222,6 +347,58 @@
       color: #a1a1aa;
     }
     .chevron.open { transform: rotate(180deg); }
+
+    .copy-all-btn {
+      width: 100%;
+      padding: 10px;
+      background: rgba(124, 58, 237, 0.06);
+      color: #7c3aed;
+      border: 1.5px solid rgba(124, 58, 237, 0.2);
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .copy-all-btn:hover { background: rgba(124, 58, 237, 0.12); }
+    .copy-all-btn.copied {
+      background: rgba(22, 163, 74, 0.08);
+      border-color: rgba(22, 163, 74, 0.2);
+      color: #16a34a;
+    }
+
+    /* Auth state */
+    .auth-state {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .auth-state p {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .signin-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .signin-btn:hover {
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -234,16 +411,58 @@
     <div class="header-title">Repurpose<span>Hub</span></div>
   </div>
 
-  <div class="platforms-bar" id="platforms-bar"></div>
+  <div class="platforms-section">
+    <div class="platforms-header">
+      <span class="platforms-label">Platforms</span>
+      <div class="platforms-toggle">
+        <a id="btn-select-all">All</a>
+        <a id="btn-select-none">None</a>
+      </div>
+    </div>
+    <div class="platforms-bar" id="platforms-bar"></div>
+  </div>
 
   <div class="content">
+    <!-- Sign in state -->
+    <div class="state" id="state-auth">
+      <div class="auth-state">
+        <div class="empty-icon">🔒</div>
+        <div class="empty-title">Sign in required</div>
+        <p>Sign in to your RepurposeHub account to start repurposing content.</p>
+        <button class="signin-btn" id="btn-signin">Sign In to RepurposeHub</button>
+      </div>
+    </div>
+
     <!-- Empty state -->
     <div class="state active" id="state-empty">
       <div class="empty-state">
         <div class="empty-icon">⚡</div>
         <div class="empty-title">Ready to repurpose</div>
-        <div class="empty-desc">Highlight text on any page and right-click → "Repurpose with RepurposeHub"</div>
+        <div class="empty-desc">Highlight text on any page, paste a URL below, or right-click → "Repurpose with RepurposeHub"</div>
+        <div class="url-input-wrap">
+          <input type="url" id="url-input" class="url-input" placeholder="https://example.com/blog/article" />
+          <button class="url-go-btn" id="btn-url-go">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
       </div>
+    </div>
+
+    <!-- Ready state — text loaded, user picks platforms then generates -->
+    <div class="state" id="state-ready">
+      <div class="ready-preview">
+        <div class="ready-preview-label">Content to repurpose</div>
+        <div class="ready-preview-text" id="ready-text"></div>
+        <div class="ready-source" id="ready-source"></div>
+      </div>
+      <button class="generate-btn" id="btn-generate">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+        </svg>
+        Repurpose to <span class="platform-count" id="platform-count">12</span> platforms
+      </button>
     </div>
 
     <!-- Loading -->
@@ -258,6 +477,12 @@
     <!-- Results -->
     <div class="state" id="state-results">
       <div class="source-info" id="source-info"></div>
+      <button class="copy-all-btn" id="btn-copy-all">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+        </svg>
+        Copy All
+      </button>
       <div id="results-container"></div>
     </div>
 
@@ -266,6 +491,8 @@
       <div class="error-state">
         <div class="error-msg" id="error-msg">Something went wrong.</div>
         <button class="retry-btn" id="btn-retry">Try Again</button>
+        <a class="signin-btn" id="btn-upgrade" href="http://localhost:3000/dashboard/settings" target="_blank" style="margin-top: 10px; display: none; text-align: center; text-decoration: none;">Upgrade Plan</a>
+        <button class="signin-btn" id="btn-signin-error" style="margin-top: 10px; display: none;">Sign In Again</button>
       </div>
     </div>
   </div>

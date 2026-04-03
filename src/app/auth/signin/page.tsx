@@ -1,13 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { Zap, Mail, Eye, EyeOff } from "lucide-react";
 
 export default function SignInPage() {
-  const { signInWithGoogle, signInWithEmail } = useAuth();
+  const { signInWithGoogle, signInWithEmail, user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const [redirectTo, setRedirectTo] = useState("/dashboard");
+
+  useEffect(() => {
+    const isExtension = new URLSearchParams(window.location.search).get("extension") === "true";
+    if (isExtension) setRedirectTo("/auth/extension-callback");
+  }, []);
+
+  // If already signed in, redirect to dashboard
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.push(redirectTo);
+    }
+  }, [authLoading, user, router, redirectTo]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -20,7 +33,7 @@ export default function SignInPage() {
     setLoading(true);
     try {
       await signInWithEmail(email, password);
-      router.push("/dashboard");
+      router.push(redirectTo);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Sign in failed";
       setError(msg.includes("invalid") ? "Invalid email or password" : msg);
@@ -33,7 +46,7 @@ export default function SignInPage() {
     setError("");
     try {
       await signInWithGoogle();
-      router.push("/dashboard");
+      router.push(redirectTo);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Google sign in failed");
     }

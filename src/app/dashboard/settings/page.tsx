@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { CreditCard, Check, Crown, Building, Zap, ExternalLink } from "lucide-react";
+import {
+  STRIPE_CHECKOUT_CANCELED_NOTICE_KEY,
+  STRIPE_CHECKOUT_PENDING_KEY,
+} from "@/lib/stripeReturnRecovery";
 
 const planCards = [
   {
@@ -23,10 +27,35 @@ const planCards = [
 export default function SettingsPage() {
   const { user, plan, usage, getIdToken } = useAuth();
   const [upgrading, setUpgrading] = useState<string | null>(null);
+  const [checkoutCanceled] = useState(() => {
+    if (typeof window === "undefined") return false;
+
+    const search = new URLSearchParams(window.location.search);
+    if (search.get("checkout") === "canceled") {
+      return true;
+    }
+
+    return window.sessionStorage.getItem(STRIPE_CHECKOUT_CANCELED_NOTICE_KEY) === "1";
+  });
+
+  useEffect(() => {
+    if (!checkoutCanceled || typeof window === "undefined") return;
+
+    window.history.replaceState({}, "", window.location.pathname);
+    window.sessionStorage.removeItem(STRIPE_CHECKOUT_CANCELED_NOTICE_KEY);
+  }, [checkoutCanceled]);
 
   const handleUpgrade = async (planType: 'pro' | 'agency') => {
     setUpgrading(planType);
     try {
+      window.sessionStorage.setItem(
+        STRIPE_CHECKOUT_PENDING_KEY,
+        JSON.stringify({
+          planType,
+          returnTo: window.location.pathname,
+        })
+      );
+
       const token = await getIdToken();
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
@@ -35,9 +64,12 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (data.url) {
-        window.location.href = data.url;
+        window.location.assign(data.url);
+        return;
       }
     } catch { /* ignore */ }
+
+    window.sessionStorage.removeItem(STRIPE_CHECKOUT_PENDING_KEY);
     setUpgrading(null);
   };
 
@@ -49,6 +81,12 @@ export default function SettingsPage() {
         <h1 className="text-3xl font-bold text-foreground">Settings</h1>
         <p className="text-muted mt-2">Manage your account, plan, and billing.</p>
       </div>
+
+      {checkoutCanceled && (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Checkout was canceled. Your current plan has not changed.
+        </div>
+      )}
 
       {/* Account info */}
       <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6 mb-8">

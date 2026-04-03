@@ -1,22 +1,36 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { PLATFORMS } from "@/lib/types";
 import { PlatformOutput } from "@/lib/types";
-import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type, ClipboardList } from "lucide-react";
 
 export default function DashboardPage() {
   const { getIdToken, refreshUsage, plan } = useAuth();
+  const [inputMode, setInputMode] = useState<"text" | "url">("text");
   const [inputText, setInputText] = useState("");
+
+  // Pre-fill from query param (e.g. from Chrome extension)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const text = params.get("text");
+    if (text) {
+      setInputText(text);
+      setInputMode("text");
+    }
+  }, []);
+  const [inputUrl, setInputUrl] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(
     PLATFORMS.map((p) => p.id)
   );
   const [voiceProfileId] = useState<string | undefined>(undefined);
   const [outputs, setOutputs] = useState<PlatformOutput[]>([]);
+  const [cost, setCost] = useState<{ model: string; inputTokens: number; outputTokens: number; totalTokens: number; costUsd: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const [copiedAll, setCopiedAll] = useState(false);
   const [expandedPlatform, setExpandedPlatform] = useState<string | null>(null);
 
   const togglePlatform = (id: string) => {
@@ -29,16 +43,23 @@ export default function DashboardPage() {
   const selectNone = () => setSelectedPlatforms([]);
 
   const generate = useCallback(async () => {
-    if (!inputText.trim()) { setError("Please paste some content to repurpose."); return; }
+    if (inputMode === "text" && !inputText.trim()) { setError("Please paste some content to repurpose."); return; }
+    if (inputMode === "url" && !inputUrl.trim()) { setError("Please enter a URL to repurpose."); return; }
+    if (inputMode === "url" && !/^https?:\/\/.+/.test(inputUrl.trim())) { setError("Please enter a valid URL starting with http:// or https://"); return; }
     if (!selectedPlatforms.length) { setError("Select at least one platform."); return; }
 
     setError("");
     setLoading(true);
     setOutputs([]);
+    setCost(null);
 
     try {
       const token = await getIdToken();
       if (!token) { setError("Please sign in again."); return; }
+
+      const payload = inputMode === "url"
+        ? { url: inputUrl.trim(), platforms: selectedPlatforms, voiceProfileId }
+        : { inputText, platforms: selectedPlatforms, voiceProfileId };
 
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -46,7 +67,7 @@ export default function DashboardPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ inputText, platforms: selectedPlatforms, voiceProfileId }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -57,18 +78,38 @@ export default function DashboardPage() {
       }
 
       setOutputs(data.outputs || []);
+      if (data.cost) setCost(data.cost);
       refreshUsage();
     } catch {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [inputText, selectedPlatforms, voiceProfileId, getIdToken, refreshUsage]);
+  }, [inputText, inputUrl, inputMode, selectedPlatforms, voiceProfileId, getIdToken, refreshUsage]);
 
   const copyToClipboard = async (platform: string, content: string) => {
     await navigator.clipboard.writeText(content);
     setCopied(platform);
     setTimeout(() => setCopied(null), 2000);
+  };
+
+  const copyAll = async () => {
+    const allContent = outputs
+      .map((output) => {
+        const platform = PLATFORMS.find((p) => p.id === output.platform);
+        return `--- ${platform?.name || output.platform} ---\n${formatContent(output.content)}`;
+      })
+      .join('\n\n');
+    await navigator.clipboard.writeText(allContent);
+    setCopiedAll(true);
+    setTimeout(() => setCopiedAll(false), 2000);
+  };
+
+  const formatContent = (content: string | Record<string, unknown>): string => {
+    if (typeof content === 'string') return content;
+    return Object.entries(content)
+      .map(([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${Array.isArray(val) ? val.join(', ') : val}`)
+      .join('\n\n');
   };
 
   const wordCount = inputText.trim().split(/\s+/).filter(Boolean).length;
@@ -84,21 +125,57 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Input panel */}
         <div className="space-y-5">
-          {/* Text input */}
+          {/* Input mode toggle + input */}
           <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
             <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-semibold text-foreground">Your Content</label>
-              <span className={`text-xs font-medium ${wordCount > maxWords ? "text-red-500" : "text-muted"}`}>
-                {wordCount.toLocaleString()} / {maxWords.toLocaleString()} words
-              </span>
+              <div className="flex items-center gap-1 bg-surface rounded-xl p-1">
+                <button
+                  onClick={() => setInputMode("text")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    inputMode === "text"
+                      ? "bg-white text-primary shadow-sm border border-primary/20"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  <Type className="w-3.5 h-3.5" /> Text
+                </button>
+                <button
+                  onClick={() => setInputMode("url")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    inputMode === "url"
+                      ? "bg-white text-primary shadow-sm border border-primary/20"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  <Link className="w-3.5 h-3.5" /> URL
+                </button>
+              </div>
+              {inputMode === "text" && (
+                <span className={`text-xs font-medium ${wordCount > maxWords ? "text-red-500" : "text-muted"}`}>
+                  {wordCount.toLocaleString()} / {maxWords.toLocaleString()} words
+                </span>
+              )}
             </div>
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="Paste your blog post, newsletter, podcast transcript, or any content you want to repurpose..."
-              rows={12}
-              className="w-full bg-surface rounded-xl p-4 border border-border text-foreground text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-muted/50"
-            />
+            {inputMode === "text" ? (
+              <textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Paste your blog post, newsletter, podcast transcript, or any content you want to repurpose..."
+                rows={12}
+                className="w-full bg-surface rounded-xl p-4 border border-border text-foreground text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-muted/50"
+              />
+            ) : (
+              <div className="space-y-3">
+                <input
+                  type="url"
+                  value={inputUrl}
+                  onChange={(e) => setInputUrl(e.target.value)}
+                  placeholder="https://example.com/blog/your-article"
+                  className="w-full bg-surface rounded-xl p-4 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-muted/50"
+                />
+                <p className="text-xs text-muted">We&apos;ll extract the article content from this URL and repurpose it across your selected platforms.</p>
+              </div>
+            )}
           </div>
 
           {/* Platform selector */}
@@ -154,10 +231,35 @@ export default function DashboardPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground">Generated Content</h2>
-            {outputs.length > 0 && (
-              <span className="text-xs text-muted">{outputs.length} versions</span>
-            )}
+            <div className="flex items-center gap-3">
+              {outputs.length > 0 && (
+                <>
+                  <button
+                    onClick={copyAll}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      copiedAll
+                        ? "bg-green-50 text-green-600 border border-green-100"
+                        : "bg-primary/5 text-primary hover:bg-primary/10 border border-primary/10"
+                    }`}
+                  >
+                    {copiedAll ? <><Check className="w-3 h-3" /> Copied All!</> : <><ClipboardList className="w-3 h-3" /> Copy All</>}
+                  </button>
+                  <span className="text-xs text-muted">{outputs.length} versions</span>
+                </>
+              )}
+            </div>
           </div>
+
+          {cost && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-4 text-xs text-amber-800">
+                <span><strong>Cost:</strong> ${cost.costUsd.toFixed(4)}</span>
+                <span className="text-amber-600">|</span>
+                <span><strong>Tokens:</strong> {cost.totalTokens.toLocaleString()} ({cost.inputTokens.toLocaleString()} in / {cost.outputTokens.toLocaleString()} out)</span>
+              </div>
+              <span className="text-xs text-amber-600 font-medium">{cost.model}</span>
+            </div>
+          )}
 
           {outputs.length === 0 && !loading && (
             <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-12 text-center">
@@ -184,19 +286,22 @@ export default function DashboardPage() {
 
               return (
                 <div key={output.platform} className="bg-white rounded-2xl border border-border/60 shadow-sm overflow-hidden">
-                  <button
+                  <div
                     onClick={() => setExpandedPlatform(isExpanded ? null : output.platform)}
-                    className="w-full flex items-center justify-between p-4 hover:bg-surface/50 transition-colors"
+                    className="w-full flex items-center justify-between p-4 hover:bg-surface/50 transition-colors cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExpandedPlatform(isExpanded ? null : output.platform); }}
                   >
                     <div className="flex items-center gap-3">
                       <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${platform?.badge || ''}`}>
                         {platform?.name || output.platform}
                       </span>
-                      <span className="text-xs text-muted">{output.content.length} chars</span>
+                      <span className="text-xs text-muted">{formatContent(output.content).length} chars</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={(e) => { e.stopPropagation(); copyToClipboard(output.platform, output.content); }}
+                        onClick={(e) => { e.stopPropagation(); copyToClipboard(output.platform, formatContent(output.content)); }}
                         className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                           copied === output.platform
                             ? "bg-green-50 text-green-600 border border-green-100"
@@ -206,11 +311,11 @@ export default function DashboardPage() {
                       </button>
                       {isExpanded ? <ChevronUp className="w-4 h-4 text-muted" /> : <ChevronDown className="w-4 h-4 text-muted" />}
                     </div>
-                  </button>
+                  </div>
                   {isExpanded && (
                     <div className="px-4 pb-4 border-t border-border/50">
                       <pre className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap font-sans mt-3 bg-surface rounded-xl p-4">
-                        {output.content}
+                        {formatContent(output.content)}
                       </pre>
                     </div>
                   )}

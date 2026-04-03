@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "RepurposeHub — AI Content Repurposer",
   "description": "Highlight any text on the web and instantly repurpose it for 12+ social platforms. Powered by RepurposeHub.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "permissions": [
     "activeTab",
     "contextMenus",
@@ -20,7 +20,6 @@
     "default_path": "sidepanel.html"
   },
   "action": {
-    "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

@@ -1,4 +1,5 @@
-const API_BASE = 'https://repurposehub.vercel.app';
+// Use localhost for dev, change to production URL before publishing
+const API_BASE = 'http://localhost:3000';
 
 // Check stored auth on load
 document.addEventListener('DOMContentLoaded', async () => {
@@ -40,20 +41,16 @@ document.getElementById('btn-signup').addEventListener('click', () => {
   chrome.tabs.create({ url: `${API_BASE}/auth/signup?extension=true` });
 });
 
-// Repurpose pasted text
+// Repurpose pasted text — store in chrome.storage so side panel picks it up
 document.getElementById('btn-repurpose').addEventListener('click', async () => {
   const text = document.getElementById('paste-input').value.trim();
   if (!text) return;
 
-  // Open side panel with this text
+  // Store pending content, then open side panel
+  await chrome.storage.local.set({
+    pendingRepurpose: { text, source: 'popup', timestamp: Date.now() }
+  });
   chrome.runtime.sendMessage({ type: 'OPEN_SIDEPANEL' });
-  setTimeout(() => {
-    chrome.runtime.sendMessage({
-      type: 'REPURPOSE_TEXT',
-      text: text,
-      source: 'popup'
-    });
-  }, 600);
   window.close();
 });
 
@@ -61,16 +58,16 @@ document.getElementById('btn-repurpose').addEventListener('click', async () => {
 document.getElementById('btn-page').addEventListener('click', async () => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab) {
-    chrome.tabs.sendMessage(tab.id, { type: 'GET_PAGE_CONTENT' }, (response) => {
+    chrome.tabs.sendMessage(tab.id, { type: 'GET_PAGE_CONTENT' }, async (response) => {
+      if (chrome.runtime.lastError) {
+        // Content script not available — page might not support it
+        return;
+      }
       if (response?.content) {
+        await chrome.storage.local.set({
+          pendingRepurpose: { text: response.content, source: tab.url, timestamp: Date.now() }
+        });
         chrome.runtime.sendMessage({ type: 'OPEN_SIDEPANEL' });
-        setTimeout(() => {
-          chrome.runtime.sendMessage({
-            type: 'REPURPOSE_TEXT',
-            text: response.content,
-            source: tab.url
-          });
-        }, 600);
         window.close();
       }
     });
