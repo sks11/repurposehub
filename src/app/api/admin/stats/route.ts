@@ -13,6 +13,10 @@ export async function GET(request: NextRequest) {
 
   const db = getAdminDb();
 
+  // Support month filter via query param
+  const { searchParams } = new URL(request.url);
+  const monthParam = searchParams.get('month');
+
   // Get all users
   const usersSnap = await db.collection('users').get();
   const users = usersSnap.docs.map(doc => ({
@@ -20,9 +24,9 @@ export async function GET(request: NextRequest) {
     ...doc.data(),
   }));
 
-  // Get usage for current month
+  // Get usage for selected month (default: current)
   const now = new Date();
-  const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const monthKey = monthParam || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
   const usagePromises = users.map(async (user) => {
     const usageDoc = await db.collection('users').doc(user.uid).collection('usage').doc(monthKey).get();
@@ -54,6 +58,18 @@ export async function GET(request: NextRequest) {
     u => ((u.currentMonthUsage as Record<string, number>)?.generationsCount || 0) > 0
   ).length;
 
+  // Calculate total cost from recent generations that have cost data
+  let totalCostUsd = 0;
+  let totalTokens = 0;
+  for (const u of usersWithUsage) {
+    for (const g of u.recentGenerations) {
+      if (g.cost) {
+        totalCostUsd += (g.cost as Record<string, number>).costUsd || 0;
+        totalTokens += (g.cost as Record<string, number>).totalTokens || 0;
+      }
+    }
+  }
+
   return NextResponse.json({
     summary: {
       totalUsers,
@@ -61,6 +77,8 @@ export async function GET(request: NextRequest) {
       freeUsers: totalUsers - proUsers,
       activeUsersThisMonth,
       totalGenerationsThisMonth,
+      totalCostUsd: Math.round(totalCostUsd * 1_000_000) / 1_000_000,
+      totalTokens,
       monthKey,
     },
     users: usersWithUsage.map(u => ({

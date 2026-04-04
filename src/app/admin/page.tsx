@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useRouter } from "next/navigation";
-import { Users, TrendingUp, Crown, Activity, RefreshCw, Zap } from "lucide-react";
+import { Users, TrendingUp, Crown, Activity, RefreshCw, Zap, DollarSign } from "lucide-react";
 
 interface UserData {
   uid: string;
@@ -27,6 +27,8 @@ interface Stats {
     freeUsers: number;
     activeUsersThisMonth: number;
     totalGenerationsThisMonth: number;
+    totalCostUsd: number;
+    totalTokens: number;
     monthKey: string;
   };
   users: UserData[];
@@ -39,6 +41,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [expandedUser, setExpandedUser] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
 
   const fetchStats = useCallback(async () => {
     setLoading(true);
@@ -46,7 +52,7 @@ export default function AdminPage() {
     const token = await getIdToken();
     if (!token) return;
     try {
-      const res = await fetch("/api/admin/stats", {
+      const res = await fetch(`/api/admin/stats?month=${selectedMonth}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.status === 403) {
@@ -64,7 +70,7 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
-  }, [getIdToken]);
+  }, [getIdToken, selectedMonth]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -121,13 +127,21 @@ export default function AdminPage() {
               <p className="text-sm text-muted">RepurposeHub — {summary.monthKey}</p>
             </div>
           </div>
-          <button onClick={fetchStats} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-border/60 text-sm font-medium text-foreground hover:bg-surface transition-colors">
-            <RefreshCw className="w-4 h-4" /> Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            <input
+              type="month"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-white border border-border/60 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            <button onClick={fetchStats} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-border/60 text-sm font-medium text-foreground hover:bg-surface transition-colors">
+              <RefreshCw className="w-4 h-4" /> Refresh
+            </button>
+          </div>
         </div>
 
         {/* Summary cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
@@ -163,6 +177,16 @@ export default function AdminPage() {
               <span className="text-sm text-muted font-medium">Generations (Month)</span>
             </div>
             <div className="text-3xl font-bold text-foreground">{summary.totalGenerationsThisMonth}</div>
+          </div>
+          <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-red-500" />
+              </div>
+              <span className="text-sm text-muted font-medium">API Cost</span>
+            </div>
+            <div className="text-3xl font-bold text-foreground">${summary.totalCostUsd?.toFixed(4) || '0.0000'}</div>
+            <div className="text-xs text-muted mt-1">{(summary.totalTokens || 0).toLocaleString()} tokens</div>
           </div>
         </div>
 
