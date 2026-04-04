@@ -3,7 +3,7 @@ import { verifyAuth } from '@/lib/firebase/auth-helper';
 import { getAdminDb } from '@/lib/firebase/admin';
 
 // Add your admin email(s) here
-const ADMIN_EMAILS = ['shravanksinghdce@gmail.com'];
+const ADMIN_EMAILS = ['shravanksinghdce@gmail.com', 'nomi137@gmail.com'];
 
 export async function GET(request: NextRequest) {
   const authUser = await verifyAuth(request);
