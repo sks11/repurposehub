@@ -38,9 +38,7 @@ export default function DashboardPage() {
   }, [getIdToken]);
 
   const [inputUrl, setInputUrl] = useState("");
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(
-    PLATFORMS.map((p) => p.id)
-  );
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [voiceProfileId, setVoiceProfileId] = useState<string | undefined>(undefined);
   const [voiceProfiles, setVoiceProfiles] = useState<{ id: string; name: string }[]>([]);
   const [outputs, setOutputs] = useState<PlatformOutput[]>([]);
