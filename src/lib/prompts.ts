@@ -1,4 +1,4 @@
-export function buildSystemPrompt(voiceAnalysis?: string): string {
+export function buildSystemPrompt(voiceAnalysis?: string, customInstructions?: string): string {
   let prompt = `You are RepurposeHub, an expert content repurposing engine. Your job is to take a single piece of text and adapt it for multiple social media platforms.
 
 RULES:
@@ -26,6 +26,13 @@ You MUST write as if you ARE this person. This is not a suggestion — it is the
 - If this person uses specific metaphors (sports, history, etc.), USE those metaphors
 - The voice should be unmistakable and consistent across all platforms
 - Adapt the FORMAT for each platform but NEVER dilute the voice`;
+  }
+
+  if (customInstructions) {
+    prompt += `
+
+CUSTOM INSTRUCTIONS FROM USER (follow these closely):
+${customInstructions}`;
   }
 
   return prompt;

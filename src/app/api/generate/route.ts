@@ -22,11 +22,12 @@ export async function POST(request: NextRequest) {
 
   // Parse body
   const body = await request.json();
-  const { platforms, voiceProfileId, url } = body as {
+  const { platforms, voiceProfileId, url, customInstructions } = body as {
     inputText?: string;
     platforms: string[];
     voiceProfileId?: string;
     url?: string;
+    customInstructions?: string;
   };
   let { inputText } = body as { inputText?: string };
 
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Call LLM
-  const systemPrompt = buildSystemPrompt(voiceAnalysis);
+  const systemPrompt = buildSystemPrompt(voiceAnalysis, customInstructions);
   const userPrompt = buildGenerationPrompt(inputText, platforms);
 
   try {

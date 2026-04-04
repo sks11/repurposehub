@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { PLATFORMS } from "@/lib/types";
 import { PlatformOutput } from "@/lib/types";
-import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type, ClipboardList, Mic } from "lucide-react";
+import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type, ClipboardList, Mic, MessageSquare } from "lucide-react";
 
 export default function DashboardPage() {
   const { getIdToken, refreshUsage, plan } = useAuth();
@@ -40,6 +40,7 @@ export default function DashboardPage() {
   const [inputUrl, setInputUrl] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [voiceProfileId, setVoiceProfileId] = useState<string | undefined>(undefined);
+  const [customInstructions, setCustomInstructions] = useState("");
   const [voiceProfiles, setVoiceProfiles] = useState<{ id: string; name: string }[]>([]);
   const [outputs, setOutputs] = useState<PlatformOutput[]>([]);
   const [loading, setLoading] = useState(false);
@@ -72,8 +73,8 @@ export default function DashboardPage() {
       if (!token) { setError("Please sign in again."); return; }
 
       const payload = inputMode === "url"
-        ? { url: inputUrl.trim(), platforms: selectedPlatforms, voiceProfileId }
-        : { inputText, platforms: selectedPlatforms, voiceProfileId };
+        ? { url: inputUrl.trim(), platforms: selectedPlatforms, voiceProfileId, customInstructions: customInstructions.trim() || undefined }
+        : { inputText, platforms: selectedPlatforms, voiceProfileId, customInstructions: customInstructions.trim() || undefined };
 
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -217,6 +218,22 @@ export default function DashboardPage() {
                 );
               })}
             </div>
+          </div>
+
+          {/* Custom instructions */}
+          <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <MessageSquare className="w-4 h-4 text-primary" />
+              <label className="text-sm font-semibold text-foreground">Custom Instructions</label>
+              <span className="text-xs text-muted">(optional)</span>
+            </div>
+            <textarea
+              value={customInstructions}
+              onChange={(e) => setCustomInstructions(e.target.value)}
+              placeholder="e.g. Write in casual tone, target startup founders, always include a CTA, use short sentences..."
+              rows={3}
+              className="w-full bg-surface rounded-xl p-3 border border-border text-foreground text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-muted/50"
+            />
           </div>
 
           {/* Voice profile selector */}
