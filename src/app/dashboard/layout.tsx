@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Zap, LayoutDashboard, History, Mic, Settings, LogOut, CreditCard } from "lucide-react";
+import { Zap, LayoutDashboard, History, Settings, LogOut, CreditCard } from "lucide-react";
 import { PLAN_LIMITS } from "@/lib/plans";
 import {
   STRIPE_CHECKOUT_PENDING_KEY,
@@ -14,7 +14,6 @@ import {
 const navItems = [
   { href: "/dashboard", label: "Generate", icon: LayoutDashboard },
   { href: "/dashboard/history", label: "History", icon: History },
-  { href: "/dashboard/voice", label: "Brand Voice", icon: Mic },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 

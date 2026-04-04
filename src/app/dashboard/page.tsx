@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { PLATFORMS } from "@/lib/types";
 import { PlatformOutput } from "@/lib/types";
-import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type, ClipboardList, Mic, MessageSquare } from "lucide-react";
+import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type, ClipboardList, MessageSquare, Save } from "lucide-react";
 
 export default function DashboardPage() {
   const { getIdToken, refreshUsage, plan } = useAuth();
@@ -21,27 +21,18 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Fetch voice profiles
-  useEffect(() => {
-    const fetchVoices = async () => {
-      const token = await getIdToken();
-      if (!token) return;
-      try {
-        const res = await fetch("/api/voice", { headers: { Authorization: `Bearer ${token}` } });
-        if (res.ok) {
-          const data = await res.json();
-          setVoiceProfiles(data.profiles || []);
-        }
-      } catch { /* ignore */ }
-    };
-    fetchVoices();
-  }, [getIdToken]);
-
   const [inputUrl, setInputUrl] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [voiceProfileId, setVoiceProfileId] = useState<string | undefined>(undefined);
   const [customInstructions, setCustomInstructions] = useState("");
-  const [voiceProfiles, setVoiceProfiles] = useState<{ id: string; name: string }[]>([]);
+  const [instructionsSaved, setInstructionsSaved] = useState(false);
+
+  // Load custom instructions from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("repurposehub_custom_instructions");
+      if (saved) setCustomInstructions(saved);
+    } catch { /* ignore */ }
+  }, []);
   const [outputs, setOutputs] = useState<PlatformOutput[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -73,8 +64,8 @@ export default function DashboardPage() {
       if (!token) { setError("Please sign in again."); return; }
 
       const payload = inputMode === "url"
-        ? { url: inputUrl.trim(), platforms: selectedPlatforms, voiceProfileId, customInstructions: customInstructions.trim() || undefined }
-        : { inputText, platforms: selectedPlatforms, voiceProfileId, customInstructions: customInstructions.trim() || undefined };
+        ? { url: inputUrl.trim(), platforms: selectedPlatforms, customInstructions: customInstructions.trim() || undefined }
+        : { inputText, platforms: selectedPlatforms, customInstructions: customInstructions.trim() || undefined };
 
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -100,7 +91,7 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [inputText, inputUrl, inputMode, selectedPlatforms, voiceProfileId, getIdToken, refreshUsage]);
+  }, [inputText, inputUrl, inputMode, selectedPlatforms, customInstructions, getIdToken, refreshUsage]);
 
   const copyToClipboard = async (platform: string, content: string) => {
     await navigator.clipboard.writeText(content);
@@ -222,10 +213,28 @@ export default function DashboardPage() {
 
           {/* Custom instructions */}
           <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <MessageSquare className="w-4 h-4 text-primary" />
-              <label className="text-sm font-semibold text-foreground">Custom Instructions</label>
-              <span className="text-xs text-muted">(optional)</span>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-primary" />
+                <label className="text-sm font-semibold text-foreground">Custom Instructions</label>
+                <span className="text-xs text-muted">(optional)</span>
+              </div>
+              <button
+                onClick={() => {
+                  try {
+                    localStorage.setItem("repurposehub_custom_instructions", customInstructions);
+                    setInstructionsSaved(true);
+                    setTimeout(() => setInstructionsSaved(false), 2000);
+                  } catch { /* ignore */ }
+                }}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                  instructionsSaved
+                    ? "bg-green-50 text-green-600 border border-green-100"
+                    : "bg-primary/5 text-primary hover:bg-primary/10 border border-primary/10"
+                }`}
+              >
+                {instructionsSaved ? <><Check className="w-3 h-3" /> Saved</> : <><Save className="w-3 h-3" /> Save</>}
+              </button>
             </div>
             <textarea
               value={customInstructions}
@@ -235,26 +244,6 @@ export default function DashboardPage() {
               className="w-full bg-surface rounded-xl p-3 border border-border text-foreground text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-muted/50"
             />
           </div>
-
-          {/* Voice profile selector */}
-          {voiceProfiles.length > 0 && (
-            <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Mic className="w-4 h-4 text-primary" />
-                <label className="text-sm font-semibold text-foreground">Brand Voice</label>
-              </div>
-              <select
-                value={voiceProfileId || ""}
-                onChange={(e) => setVoiceProfileId(e.target.value || undefined)}
-                className="w-full bg-surface rounded-xl p-3 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-              >
-                <option value="">No voice profile (default)</option>
-                {voiceProfiles.map((vp) => (
-                  <option key={vp.id} value={vp.id}>{vp.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
 
           {/* Generate button */}
           {error && (

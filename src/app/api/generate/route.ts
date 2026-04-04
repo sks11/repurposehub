@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/firebase/auth-helper';
 import { getUsage, getUserProfile, incrementUsage, saveGeneration } from '@/lib/firebase/firestore';
-import { getVoiceProfile } from '@/lib/firebase/firestore';
 import { canGenerate } from '@/lib/plans';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { buildSystemPrompt, buildGenerationPrompt } from '@/lib/prompts';
@@ -22,10 +21,9 @@ export async function POST(request: NextRequest) {
 
   // Parse body
   const body = await request.json();
-  const { platforms, voiceProfileId, url, customInstructions } = body as {
+  const { platforms, url, customInstructions } = body as {
     inputText?: string;
     platforms: string[];
-    voiceProfileId?: string;
     url?: string;
     customInstructions?: string;
   };
@@ -96,15 +94,8 @@ export async function POST(request: NextRequest) {
     }, { status: 403 });
   }
 
-  // Get voice profile if specified
-  let voiceAnalysis: string | undefined;
-  if (voiceProfileId) {
-    const vp = await getVoiceProfile(authUser.uid, voiceProfileId);
-    if (vp) voiceAnalysis = vp.analysis;
-  }
-
   // Call LLM
-  const systemPrompt = buildSystemPrompt(voiceAnalysis, customInstructions);
+  const systemPrompt = buildSystemPrompt(customInstructions);
   const userPrompt = buildGenerationPrompt(inputText, platforms);
 
   try {
@@ -173,7 +164,6 @@ export async function POST(request: NextRequest) {
         inputText,
         platforms,
         outputs,
-        ...(voiceProfileId ? { voiceProfileId } : {}),
         cost: costData,
         createdAt: Date.now(),
       }),

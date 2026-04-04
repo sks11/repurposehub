@@ -1,4 +1,4 @@
-export function buildSystemPrompt(voiceAnalysis?: string, customInstructions?: string): string {
+export function buildSystemPrompt(customInstructions?: string): string {
   let prompt = `You are RepurposeHub, an expert content repurposing engine. Your job is to take a single piece of text and adapt it for multiple social media platforms.
 
 RULES:
@@ -9,24 +9,6 @@ RULES:
 5. Make each version feel like it was natively written for that platform by someone who deeply understands it.
 6. Include appropriate CTAs, hashtags, and formatting for each platform.
 7. Output ONLY valid JSON — no markdown, no explanation, no commentary.`;
-
-  if (voiceAnalysis) {
-    prompt += `
-
-BRAND VOICE INSTRUCTIONS (HIGHEST PRIORITY — OVERRIDES ALL OTHER STYLE RULES):
-The user has a very specific and distinctive writing voice. Here is the analysis:
-${voiceAnalysis}
-
-You MUST write as if you ARE this person. This is not a suggestion — it is the #1 requirement:
-- Use their exact vocabulary level, sentence structure, and rhetorical devices
-- Replicate their distinctive phrases, metaphors, and humor style
-- Match their formality, wit, and personality in EVERY output
-- A reader familiar with this person should immediately recognize the voice
-- If this person uses elaborate vocabulary, USE elaborate vocabulary — do NOT simplify
-- If this person uses specific metaphors (sports, history, etc.), USE those metaphors
-- The voice should be unmistakable and consistent across all platforms
-- Adapt the FORMAT for each platform but NEVER dilute the voice`;
-  }
 
   if (customInstructions) {
     prompt += `
