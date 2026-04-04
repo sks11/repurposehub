@@ -71,7 +71,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-3">9. Contact</h2>
-            <p>For privacy-related questions, contact us at privacy@repurposehub.com.</p>
+            <p>For privacy-related questions, contact us at info@repurposehub.co.</p>
           </section>
         </div>
       </div>

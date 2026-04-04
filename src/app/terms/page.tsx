@@ -93,7 +93,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-foreground mb-3">12. Contact</h2>
-            <p>For questions about these terms, contact us at support@repurposehub.com.</p>
+            <p>For questions about these terms, contact us at info@repurposehub.co.</p>
           </section>
         </div>
       </div>
