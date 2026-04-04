@@ -1,5 +1,5 @@
 // Use localhost for dev, change to production URL before publishing
-const API_BASE = 'https://repurposehub.vercel.app';
+const API_BASE = 'https://repurposehub.co';
 
 const PLATFORMS = [
   { id: 'facebook', name: 'Facebook', badge: 'badge-facebook' },
