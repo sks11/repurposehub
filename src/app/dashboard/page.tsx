@@ -44,7 +44,6 @@ export default function DashboardPage() {
   const [voiceProfileId, setVoiceProfileId] = useState<string | undefined>(undefined);
   const [voiceProfiles, setVoiceProfiles] = useState<{ id: string; name: string }[]>([]);
   const [outputs, setOutputs] = useState<PlatformOutput[]>([]);
-  const [cost, setCost] = useState<{ model: string; inputTokens: number; outputTokens: number; totalTokens: number; costUsd: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
@@ -69,7 +68,6 @@ export default function DashboardPage() {
     setError("");
     setLoading(true);
     setOutputs([]);
-    setCost(null);
 
     try {
       const token = await getIdToken();
@@ -96,7 +94,7 @@ export default function DashboardPage() {
       }
 
       setOutputs(data.outputs || []);
-      if (data.cost) setCost(data.cost);
+      // cost data available in data.cost (visible in server logs)
       refreshUsage();
     } catch {
       setError("An unexpected error occurred. Please try again.");
@@ -287,17 +285,6 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-
-          {cost && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-4 text-xs text-amber-800">
-                <span><strong>Cost:</strong> ${cost.costUsd.toFixed(4)}</span>
-                <span className="text-amber-600">|</span>
-                <span><strong>Tokens:</strong> {cost.totalTokens.toLocaleString()} ({cost.inputTokens.toLocaleString()} in / {cost.outputTokens.toLocaleString()} out)</span>
-              </div>
-              <span className="text-xs text-amber-600 font-medium">{cost.model}</span>
-            </div>
-          )}
 
           {outputs.length === 0 && !loading && (
             <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-12 text-center">

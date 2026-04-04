@@ -165,6 +165,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save generation and increment usage
+    const costData = { model, inputTokens, outputTokens, totalTokens, costUsd: Math.round(costUsd * 1_000_000) / 1_000_000 };
     const [genId] = await Promise.all([
       saveGeneration({
         userId: authUser.uid,
@@ -172,6 +173,7 @@ export async function POST(request: NextRequest) {
         platforms,
         outputs,
         ...(voiceProfileId ? { voiceProfileId } : {}),
+        cost: costData,
         createdAt: Date.now(),
       }),
       incrementUsage(authUser.uid),

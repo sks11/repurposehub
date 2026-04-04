@@ -33,6 +33,7 @@ export interface Generation {
   platforms: string[];
   outputs: PlatformOutput[];
   voiceProfileId?: string;
+  cost?: { model: string; inputTokens: number; outputTokens: number; totalTokens: number; costUsd: number };
   createdAt: number;
 }
 

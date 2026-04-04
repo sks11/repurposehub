@@ -16,6 +16,7 @@ interface UserData {
     platforms: string[];
     createdAt: number;
     inputPreview: string;
+    cost?: { model: string; inputTokens: number; outputTokens: number; totalTokens: number; costUsd: number };
   }[];
 }
 
@@ -210,6 +211,9 @@ export default function AdminPage() {
                           {g.inputPreview || '(no preview)'}
                         </div>
                         <div className="flex items-center gap-3 flex-shrink-0">
+                          {g.cost && (
+                            <span className="text-xs text-amber-600 font-medium">${g.cost.costUsd.toFixed(4)} · {g.cost.totalTokens} tok</span>
+                          )}
                           <span className="text-xs text-muted">{g.platforms.length} platforms</span>
                           <span className="text-xs text-muted">{formatDateTime(g.createdAt)}</span>
                         </div>

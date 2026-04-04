@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
         platforms: d.data().platforms,
         createdAt: d.data().createdAt,
         inputPreview: (d.data().inputText || '').slice(0, 100),
+        cost: d.data().cost || null,
       })),
     };
   });
