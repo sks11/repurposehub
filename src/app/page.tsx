@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import TryIt from "@/components/TryIt";
 import SocialProof from "@/components/SocialProof";
 import HowItWorks from "@/components/HowItWorks";
 import PlatformShowcase from "@/components/PlatformShowcase";
@@ -18,6 +19,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <TryIt />
         <SocialProof />
         <HowItWorks />
         <PlatformShowcase />
