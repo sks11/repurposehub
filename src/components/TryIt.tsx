@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type } from "lucide-react";
 import { PLATFORMS } from "@/lib/types";
 
-const MAX_PLATFORMS = 3;
+const MAX_PLATFORMS = 12;
 
 export default function TryIt() {
   const [inputMode, setInputMode] = useState<"text" | "url">("text");
@@ -93,7 +93,7 @@ export default function TryIt() {
             See it in <span className="gradient-text">action</span>
           </h2>
           <p className="text-muted text-lg mt-4 max-w-2xl mx-auto">
-            Paste text or a URL, pick up to 3 platforms, and see the magic. No sign-up required.
+            Paste text or a URL, pick your platforms, and repurpose instantly.
           </p>
         </motion.div>
 
@@ -142,8 +142,8 @@ export default function TryIt() {
 
             <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
               <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-semibold text-foreground">Pick up to 3 platforms</label>
-                <span className="text-xs text-muted">{selectedPlatforms.length} / {MAX_PLATFORMS}</span>
+                <label className="text-sm font-semibold text-foreground">Select Platforms</label>
+                <span className="text-xs text-muted">{selectedPlatforms.length} selected</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {PLATFORMS.map((p) => {
