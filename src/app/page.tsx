@@ -4,8 +4,6 @@ import TryIt from "@/components/TryIt";
 import SocialProof from "@/components/SocialProof";
 import HowItWorks from "@/components/HowItWorks";
 import PlatformShowcase from "@/components/PlatformShowcase";
-import BrandVoice from "@/components/BrandVoice";
-import BeforeAfter from "@/components/BeforeAfter";
 import ChromeExtension from "@/components/ChromeExtension";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
@@ -23,11 +21,9 @@ export default function Home() {
         <SocialProof />
         <HowItWorks />
         <PlatformShowcase />
-        <BrandVoice />
-        <BeforeAfter />
         <ChromeExtension />
-        <Testimonials />
         <Pricing />
+        <Testimonials />
         <FAQ />
         <FinalCTA />
       </main>
