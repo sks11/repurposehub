@@ -17,6 +17,13 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Auto-redirect logged-in users to dashboard (only on landing page)
+  useEffect(() => {
+    if (!authLoading && user && window.location.pathname === "/") {
+      window.location.href = "/dashboard";
+    }
+  }, [authLoading, user]);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
