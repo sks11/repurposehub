@@ -40,6 +40,10 @@ export default function TryIt() {
     if (inputMode === "url" && !/^https?:\/\/.+/.test(inputUrl.trim())) { setError("Enter a valid URL starting with http:// or https://"); return; }
     if (!selectedPlatforms.length) { setError("Select at least one platform."); return; }
 
+    // Redirect to signup — don't generate without auth
+    window.location.href = "/auth/signup";
+    return;
+
     setError("");
     setLoading(true);
     setOutputs([]);
@@ -177,7 +181,7 @@ export default function TryIt() {
               ) : (
                 <>
                   <Wand2 className="w-5 h-5" />
-                  Repurpose{selectedPlatforms.length > 0 ? ` to ${selectedPlatforms.length} Platform${selectedPlatforms.length > 1 ? 's' : ''}` : ''}
+                  Sign Up &amp; Repurpose{selectedPlatforms.length > 0 ? ` to ${selectedPlatforms.length} Platform${selectedPlatforms.length > 1 ? 's' : ''}` : ''}
                 </>
               )}
             </button>
