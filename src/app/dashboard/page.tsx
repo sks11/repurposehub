@@ -11,14 +11,28 @@ export default function DashboardPage() {
   const [inputMode, setInputMode] = useState<"text" | "url">("text");
   const [inputText, setInputText] = useState("");
 
-  // Pre-fill from query param (e.g. from Chrome extension)
+  // Pre-fill from query param (Chrome extension) or localStorage (Try It section)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const text = params.get("text");
     if (text) {
       setInputText(text);
       setInputMode("text");
+      return;
     }
+
+    // Restore from Try It section (saved before signup redirect)
+    try {
+      const pending = localStorage.getItem("repurposehub_pending");
+      if (pending) {
+        const data = JSON.parse(pending);
+        if (data.inputMode) setInputMode(data.inputMode);
+        if (data.inputText) setInputText(data.inputText);
+        if (data.inputUrl) setInputUrl(data.inputUrl);
+        if (data.platforms?.length) setSelectedPlatforms(data.platforms);
+        localStorage.removeItem("repurposehub_pending");
+      }
+    } catch { /* ignore */ }
   }, []);
 
   const [inputUrl, setInputUrl] = useState("");

@@ -40,7 +40,16 @@ export default function TryIt() {
     if (inputMode === "url" && !/^https?:\/\/.+/.test(inputUrl.trim())) { setError("Enter a valid URL starting with http:// or https://"); return; }
     if (!selectedPlatforms.length) { setError("Select at least one platform."); return; }
 
-    // Redirect to signup — don't generate without auth
+    // Save selections to localStorage so dashboard can restore them after signup
+    try {
+      localStorage.setItem("repurposehub_pending", JSON.stringify({
+        inputMode,
+        inputText: inputMode === "text" ? inputText : "",
+        inputUrl: inputMode === "url" ? inputUrl : "",
+        platforms: selectedPlatforms,
+      }));
+    } catch { /* ignore */ }
+
     window.location.href = "/auth/signup";
     return;
 
