@@ -30,18 +30,54 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { inputText, platforms } = body as { inputText: string; platforms: string[] };
+  const { platforms, url } = body as { inputText?: string; platforms: string[]; url?: string };
+  let { inputText } = body as { inputText?: string };
 
-  if (!inputText?.trim() || !platforms?.length) {
-    return NextResponse.json({ error: 'Text and at least one platform required' }, { status: 400 });
-  }
-
-  if (inputText.length > 2000) {
-    return NextResponse.json({ error: 'Free trial limited to 2,000 characters. Sign up for more!' }, { status: 400 });
+  if (!platforms?.length) {
+    return NextResponse.json({ error: 'Select at least one platform' }, { status: 400 });
   }
 
   if (platforms.length > 3) {
     return NextResponse.json({ error: 'Free trial limited to 3 platforms. Sign up for all 12!' }, { status: 400 });
+  }
+
+  // Fetch content from URL if provided
+  if (url && !inputText) {
+    try {
+      const urlObj = new URL(url);
+      if (!['http:', 'https:'].includes(urlObj.protocol)) {
+        return NextResponse.json({ error: 'Only HTTP/HTTPS URLs are supported' }, { status: 400 });
+      }
+      const pageRes = await fetch(url, {
+        headers: { 'User-Agent': 'RepurposeHub/1.0' },
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!pageRes.ok) {
+        return NextResponse.json({ error: `Failed to fetch URL (${pageRes.status})` }, { status: 400 });
+      }
+      const html = await pageRes.text();
+      inputText = html
+        .replace(/<script[\s\S]*?<\/script>/gi, '')
+        .replace(/<style[\s\S]*?<\/style>/gi, '')
+        .replace(/<nav[\s\S]*?<\/nav>/gi, '')
+        .replace(/<footer[\s\S]*?<\/footer>/gi, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 2000);
+    } catch {
+      return NextResponse.json({ error: 'Failed to fetch content from URL' }, { status: 400 });
+    }
+  }
+
+  if (!inputText?.trim()) {
+    return NextResponse.json({ error: 'Text or URL required' }, { status: 400 });
+  }
+
+  if (inputText.length > 2000) {
+    return NextResponse.json({ error: 'Free trial limited to 2,000 characters. Sign up for more!' }, { status: 400 });
   }
 
   const systemPrompt = buildSystemPrompt();

@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Wand2, Copy, Check, AlertCircle, ChevronDown, ChevronUp, Link, Type } from "lucide-react";
 import { PLATFORMS } from "@/lib/types";
 
 const MAX_PLATFORMS = 3;
 
 export default function TryIt() {
+  const [inputMode, setInputMode] = useState<"text" | "url">("text");
   const [inputText, setInputText] = useState("");
+  const [inputUrl, setInputUrl] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [outputs, setOutputs] = useState<{ platform: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,9 @@ export default function TryIt() {
   };
 
   const generate = async () => {
-    if (!inputText.trim()) { setError("Paste some content to repurpose."); return; }
+    if (inputMode === "text" && !inputText.trim()) { setError("Paste some content to repurpose."); return; }
+    if (inputMode === "url" && !inputUrl.trim()) { setError("Enter a URL to repurpose."); return; }
+    if (inputMode === "url" && !/^https?:\/\/.+/.test(inputUrl.trim())) { setError("Enter a valid URL starting with http:// or https://"); return; }
     if (!selectedPlatforms.length) { setError("Select at least one platform."); return; }
 
     setError("");
@@ -41,10 +45,14 @@ export default function TryIt() {
     setOutputs([]);
 
     try {
+      const payload = inputMode === "url"
+        ? { url: inputUrl.trim(), platforms: selectedPlatforms }
+        : { inputText: inputText.slice(0, 2000), platforms: selectedPlatforms };
+
       const res = await fetch("/api/try", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inputText: inputText.slice(0, 2000), platforms: selectedPlatforms }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -81,7 +89,7 @@ export default function TryIt() {
             See it in <span className="gradient-text">action</span>
           </h2>
           <p className="text-muted text-lg mt-4 max-w-2xl mx-auto">
-            Paste any text, pick up to 3 platforms, and see the magic. No sign-up required.
+            Paste text or a URL, pick up to 3 platforms, and see the magic. No sign-up required.
           </p>
         </motion.div>
 
@@ -90,16 +98,42 @@ export default function TryIt() {
           <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="space-y-4">
             <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
               <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-semibold text-foreground">Your Content</label>
-                <span className="text-xs text-muted">{inputText.length} / 2,000</span>
+                <div className="flex items-center gap-1 bg-surface rounded-xl p-1">
+                  <button onClick={() => setInputMode("text")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      inputMode === "text" ? "bg-white text-primary shadow-sm border border-primary/20" : "text-muted hover:text-foreground"
+                    }`}>
+                    <Type className="w-3.5 h-3.5" /> Text
+                  </button>
+                  <button onClick={() => setInputMode("url")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      inputMode === "url" ? "bg-white text-primary shadow-sm border border-primary/20" : "text-muted hover:text-foreground"
+                    }`}>
+                    <Link className="w-3.5 h-3.5" /> URL
+                  </button>
+                </div>
+                {inputMode === "text" && <span className="text-xs text-muted">{inputText.length} / 2,000</span>}
               </div>
-              <textarea
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value.slice(0, 2000))}
-                placeholder="Paste a blog paragraph, tweet, or any text you want to repurpose..."
-                rows={8}
-                className="w-full bg-surface rounded-xl p-4 border border-border text-foreground text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-muted/50"
-              />
+              {inputMode === "text" ? (
+                <textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value.slice(0, 2000))}
+                  placeholder="Paste a blog paragraph, tweet, or any text you want to repurpose..."
+                  rows={8}
+                  className="w-full bg-surface rounded-xl p-4 border border-border text-foreground text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-muted/50"
+                />
+              ) : (
+                <div className="space-y-3">
+                  <input
+                    type="url"
+                    value={inputUrl}
+                    onChange={(e) => setInputUrl(e.target.value)}
+                    placeholder="https://example.com/blog/your-article"
+                    className="w-full bg-surface rounded-xl p-4 border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-muted/50"
+                  />
+                  <p className="text-xs text-muted">We&apos;ll extract the article content and repurpose it.</p>
+                </div>
+              )}
             </div>
 
             <div className="bg-white rounded-2xl border border-border/60 shadow-sm p-6">
