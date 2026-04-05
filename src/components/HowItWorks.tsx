@@ -12,7 +12,7 @@ const steps = [
   {
     icon: Wand2, step: "02", title: "AI Adapts Everything",
     description: "Our AI analyzes your text and rewrites it for each platform — matching tone, length, format, and best practices automatically.",
-    color: "from-accent to-blue-500", detail: "Uses your Brand Voice profile for consistency",
+    color: "from-accent to-blue-500", detail: "Applies your Custom Instructions for consistency",
   },
   {
     icon: Send, step: "03", title: "Copy & Publish",

@@ -181,7 +181,7 @@ export default function Hero() {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="px-3 py-1.5 rounded-lg bg-primary/8 text-primary text-xs font-semibold">
-                    Brand Voice: On
+                    Custom Instructions: On
                   </div>
                   <div className="px-3 py-1.5 rounded-lg bg-accent/8 text-cyan-700 text-xs font-semibold">
                     12 Platforms Selected

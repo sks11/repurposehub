@@ -7,13 +7,13 @@ const plans = [
   {
     name: "Starter", icon: Zap, description: "For creators getting started",
     price: 0, badge: null,
-    features: ["30 generations / month", "All 12 platforms", "1 Brand Voice profile", "7-day history", "One-click copy"],
+    features: ["30 generations / month", "All 12 platforms", "Custom Instructions", "7-day history", "One-click copy"],
     cta: "Start Free", ctaStyle: "border-2 border-border hover:border-primary/40 hover:bg-surface text-foreground", popular: false,
   },
   {
     name: "Pro", icon: Crown, description: "For serious content creators",
     price: 29, badge: "Most Popular",
-    features: ["1,000 generations / month", "All 12 platforms", "3 Brand Voice profiles", "90-day history + search", "URL content import", "Copy All outputs", "Email support"],
+    features: ["1,000 generations / month", "All 12 platforms", "Custom Instructions", "90-day history + search", "URL content import", "Copy All outputs", "Email support"],
     cta: "Upgrade to Pro", ctaStyle: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-light hover:to-primary text-white shadow-lg shadow-primary/20", popular: true,
   },
 ];

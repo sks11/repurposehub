@@ -6,7 +6,7 @@ const footerLinks = {
   Product: [
     { label: "Features", href: "/#how-it-works" },
     { label: "Platforms", href: "/#platforms" },
-    { label: "Brand Voice", href: "/#voice" },
+    { label: "Try It", href: "/#try" },
     { label: "Chrome Extension", href: "/#extension" },
     { label: "Pricing", href: "/#pricing" },
   ],

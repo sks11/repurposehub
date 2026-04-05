@@ -254,7 +254,7 @@ export default function TryIt() {
             {hasTriedOnce && outputs.length > 0 && (
               <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl border border-primary/10 p-6 text-center">
                 <p className="text-sm text-foreground font-medium mb-3">
-                  Want all 12 platforms, Brand Voice, URL import, and more?
+                  Want all 12 platforms, Custom Instructions, URL import, and more?
                 </p>
                 <a href="/auth/signup"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all">

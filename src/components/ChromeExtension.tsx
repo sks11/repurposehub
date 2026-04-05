@@ -17,7 +17,7 @@ const steps = [
   {
     icon: Copy,
     title: "Copy & Publish",
-    description: "Copy individual outputs or use Copy All. Your brand voice is applied automatically. Just paste and post.",
+    description: "Copy individual outputs or use Copy All. Just paste and post.",
   },
 ];
 
